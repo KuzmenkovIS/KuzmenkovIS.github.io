@@ -1,0 +1,98 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    height: 64px;
+    width: 100%;
+
+    background-color: #f6f8fa;
+
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+header > p {
+    margin-left: 32px;
+}
+
+footer {
+    height: 44px;
+    width: 100%;
+
+    background-color: #f6f8fa;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th {
+    height: 24px;
+    border: 1px solid black;
+    padding: 0 6px 0 6px;
+}
+
+td {
+    height: 24px;
+    border: 1px solid black;
+    padding: 0 0px 0 0px;
+}
+
+    .tdFlexContainer {
+        margin: 0;
+        padding: 4px;
+
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+        .tdFlexContainer > input {
+            margin-right: 4px;
+        }
+
+
+
+input {
+    height: calc(100% - 2px);
+    width: calc(100% - 8px);
+    margin: 0;
+    padding: 1px 4px 1px 4px;
+    border: none;
+
+    text-align: end;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+    input:disabled {
+        color: black;
+    }
+
+.main {
+    height: calc(100% - 64px - 44px);
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
