@@ -15,104 +15,46 @@
     </header>
     <section class="main">
         <table>
-            <Caption>Вклады</Caption>
             <tr>
-                <th>Вклад (р.)</th>
-                <th>Пополнение (р.)</th>
-                <th>Ставка (%)</th>
-                <th>Срок (мес.)</th>
-                <th>Итого (руб.)</th>
+                <th>Банк</th>
+                <th>Вклад</th>
+                <th>Первоначальный взнос</th>
+                <th>Пополнение</th>
+                <th>Ставка</th>
+                <th>Срок</th>
+                <th>Начисление процентов</th>
+                <th>Итого</th>
             </tr>
             <tr>
+                <td>
+                    <select name="bank" id="">
+                        <option value="">Выберите банк</option>
+                        <!-- <option value="Sber">Сбер</option>
+                        <option value="VTB">ВТБ</option> -->
+                    </select>
+                </td>
+                <td><input type="text" name="deposit" id=""></td>
                 <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
                 <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
                 <td><input type="text" class= 'percent' value='0 %'></td>
                 <td>
                     <div class="tdFlexContainer">
-                        <input type="text" class= 'term' value=0>
+                        <input type="number" class= 'term' min='0' step='1' value=0>
                         <select name="" id="">
                             <option value="months">месяцы</option>
                             <option value="years">годы</option>
                         </select>
                     </div>
                 </td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381' disabled></td>
-            </tr>
-            <tr>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'percent' value='0 %'></td>
                 <td>
-                    <div class="tdFlexContainer">
-                        <input type="text" class= 'term' value=0>
-                        <select name="" id="">
-                            <option value="months">месяцы</option>
-                            <option value="years">годы</option>
-                        </select>
-                    </div>
+                    <select name="" id="">
+                        <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
+                        <option value="percentInTheEnd">Проценты в конце срока</option>
+                    </select>
                 </td>
                 <td><input type="text" class= 'currency' value='0,00 &#8381' disabled></td>
             </tr>
-            <tr>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'percent' value='0 %'></td>
-                <td>
-                    <div class="tdFlexContainer">
-                        <input type="text" class= 'term' value=0>
-                        <select name="" id="">
-                            <option value="months">месяцы</option>
-                            <option value="years">годы</option>
-                        </select>
-                    </div>
-                </td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381' disabled></td>
-            </tr>
-            <tr>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'percent' value='0 %'></td>
-                <td>
-                    <div class="tdFlexContainer">
-                        <input type="text" class= 'term' value=0>
-                        <select name="" id="">
-                            <option value="months">месяцы</option>
-                            <option value="years">годы</option>
-                        </select>
-                    </div>
-                </td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381' disabled></td>
-            </tr>
-            <tr>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'percent' value='0 %'></td>
-                <td>
-                    <div class="tdFlexContainer">
-                        <input type="text" class= 'term' value=0>
-                        <select name="" id="">
-                            <option value="months">месяцы</option>
-                            <option value="years">годы</option>
-                        </select>
-                    </div>
-                </td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381' disabled></td>
-            </tr>
-            <tr>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'percent' value='0 %'></td>
-                <td>
-                    <div class="tdFlexContainer">
-                        <input type="text" class= 'term' value=0>
-                        <select name="" id="">
-                            <option value="months">месяцы</option>
-                            <option value="years">годы</option>
-                        </select>
-                    </div>
-                </td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381' disabled></td>
-            </tr>
+            
         </table>
     </section>
     <footer>

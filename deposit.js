@@ -1,8 +1,21 @@
+let listBanks = [
+
+    {nameRus: 'Сбербанк',
+     nameEng: 'Sber'},
+
+    {nameRus: 'ВТБ',
+     nameEng: 'VTB'},
+
+    {nameRus: 'Тинькофф',
+     nameEng: 'Tinkoff'}
+]
+
 let deposit = {
 
     base: 0,
     replenishment: 0,
     rate: 0,
+    rateType: '',
     term: 0,
 
     calculate: function () {
@@ -11,7 +24,7 @@ let deposit = {
         if (this.term === 0) {
             console.log('Задайте срок вклада больше 0');
             return this.base;
-        } else {
+        } else if (this.rateType === 'capitalizationPerMonth') {
             for (let i = 1; i <= this.term; i++) {
                 if (i === 1) {
                     result = this.base + this.replenishment + ((this.base * this.rate) / 12);
@@ -19,9 +32,34 @@ let deposit = {
                     result = result + this.replenishment + ((result * this.rate) / 12);
                 }
             }
+        } else if (this.rateType === 'percentInTheEnd') {
+            result = this.base + (((this.base * this.rate) / 12) * (this.term));
         }
         
         return result;
+    }
+}
+
+function addListBanksToSelect (event) {
+    console.log('Event: ', event);
+    console.log('Select Banks Step 1');
+    if (event.type === 'focusin' && event.target.nodeName.toLowerCase() === 'select' && event.target.name === 'bank') {
+        console.log('Select Banks Step 2');
+        console.log('Select property options: ', event.target.options);
+        console.log('Select property length: ', event.target.length);
+
+        if (event.target.length > 1) {
+            console.log('Delete old select options');
+            event.target.length = 1;
+        }
+
+        for (let bank of listBanks) {
+            let option = document.createElement('option');
+            option.value = bank.nameEng;
+            option.text = bank.nameRus;
+
+            event.target.add(option);
+        }
     }
 }
 
@@ -80,128 +118,117 @@ function convertStringToNumberPercent (value) {
 
 let listDeposits = document.querySelector('table');
 
-    listDeposits.formatInput = function (input, event) {
-        if (typeof (input.value) === 'string') {
+    listDeposits.formatInput = function (event) {
 
-            let valueLengthStart = input.value.length;
-            let cursorStart = input.selectionStart;
-            let cursorEnd = input.selectionEnd;
+        console.log('Function formatInput start... on event: ', event);
 
-            if (input.className === 'currency') {
+        if (event.target.nodeName.toLowerCase() === 'input' && typeof (event.target.value) === 'string') {
+            let valueLengthStart = event.target.value.length;
+            let cursorStart = event.target.selectionStart;
+            let cursorEnd = event.target.selectionEnd;
 
-                if ((cursorStart === 0) && (convertStringToNumberFractionDigits2(input.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
+            if (event.target.className === 'currency') {
+
+                if ((cursorStart === 0) && (convertStringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
                     
                 } else {
-                    input.value = convertStringToNumberFractionDigits2(input.value, event).toLocaleString('ru', {
+                    event.target.value = convertStringToNumberFractionDigits2(event.target.value, event).toLocaleString('ru', {
                         style: 'currency',
                         currency: 'RUB',
                         minimumFractionDigits: 2
                     });
                     
-                    if (input.value.length === 3) {
-                        input.selectionStart = 1;
-                        input.selectionEnd = 1;
-                    } else if (cursorStart >= (input.value.length - 2)) {
-                        input.selectionStart = input.value.length - 2;
-                        input.selectionEnd = input.value.length - 2;
-                    } else if (valueLengthStart > input.value.length) {
+                    if (event.target.value.length === 3) {
+                        event.target.selectionStart = 1;
+                        event.target.selectionEnd = 1;
+                    } else if (cursorStart >= (event.target.value.length - 2)) {
+                        event.target.selectionStart = event.target.value.length - 2;
+                        event.target.selectionEnd = event.target.value.length - 2;
+                    } else if (valueLengthStart > event.target.value.length) {
                         if (cursorStart === 0) {
-                            input.selectionStart = cursorStart;
-                            input.selectionEnd = cursorEnd;
-                        } else if (input.value.length - cursorStart === 3) {
-                            input.selectionStart = cursorStart;
-                            input.selectionEnd = cursorEnd;
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
+                        } else if (event.target.value.length - cursorStart === 3) {
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
                         } else {
-                            input.selectionStart = cursorStart - 1;
-                            input.selectionEnd = cursorEnd - 1;
+                            event.target.selectionStart = cursorStart - 1;
+                            event.target.selectionEnd = cursorEnd - 1;
                         }
-                    } else if (valueLengthStart < input.value.length) {
-                        if (cursorStart === input.value.length - 5 && event.inputType === "deleteContentForward") {
-                            input.selectionStart = cursorStart + 1;
-                            input.selectionEnd = cursorEnd + 1;
-                        } else if (cursorStart === input.value.length - 3 || cursorStart === input.value.length - 4 || cursorStart === input.value.length - 5) {
-                            input.selectionStart = cursorStart;
-                            input.selectionEnd = cursorEnd;
+                    } else if (valueLengthStart < event.target.value.length) {
+                        if (cursorStart === event.target.value.length - 5 && event.inputType === "deleteContentForward") {
+                            event.target.selectionStart = cursorStart + 1;
+                            event.target.selectionEnd = cursorEnd + 1;
+                        } else if (cursorStart === event.target.value.length - 3 || cursorStart === event.target.value.length - 4 || cursorStart === event.target.value.length - 5) {
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
                         } else if (event.inputType === "deleteContentBackward") {
-                            input.selectionStart = cursorStart;
-                            input.selectionEnd = cursorEnd;
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
                         } else {
-                            input.selectionStart = cursorStart + 1;
-                            input.selectionEnd = cursorEnd + 1;
+                            event.target.selectionStart = cursorStart + 1;
+                            event.target.selectionEnd = cursorEnd + 1;
                         }
                     } else if ( valueLengthStart === 5 && cursorStart === 0) {
-                        input.selectionStart = cursorStart + 1;
-                        input.selectionEnd = cursorEnd + 1;
+                        event.target.selectionStart = cursorStart + 1;
+                        event.target.selectionEnd = cursorEnd + 1;
                     } else {
-                        input.selectionStart = cursorStart;
-                        input.selectionEnd = cursorEnd;
+                        event.target.selectionStart = cursorStart;
+                        event.target.selectionEnd = cursorEnd;
                     }
                 }
 
-            } else if (input.className === 'percent') {
-                input.value = convertStringToNumberPercent(input.value).toLocaleString('ru', {
+            } else if (event.target.className === 'percent') {
+                event.target.value = convertStringToNumberPercent(event.target.value).toLocaleString('ru', {
                     style: 'percent',
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
                 });
 
-                if (cursorStart >= (input.value.length - 2)) {
-                    input.selectionStart = input.value.length - 2;
-                    input.selectionEnd = input.value.length - 2;
-                } else if ((input.value.replace(/\s/g, '') === '0%') && event.inputType === 'deleteContentForward') {
-                    input.selectionStart = 1;
-                    input.selectionEnd = 1;
+                if (cursorStart >= (event.target.value.length - 2)) {
+                    event.target.selectionStart = event.target.value.length - 2;
+                    event.target.selectionEnd = event.target.value.length - 2;
+                } else if ((event.target.value.replace(/\s/g, '') === '0%') && event.inputType === 'deleteContentForward') {
+                    event.target.selectionStart = 1;
+                    event.target.selectionEnd = 1;
                 } else {
-                    input.selectionStart = cursorStart;
-                    input.selectionEnd = cursorEnd;
+                    event.target.selectionStart = cursorStart;
+                    event.target.selectionEnd = cursorEnd;
                 }
-            } else if (input.className === 'term') {
-                input.value = Number(input.value.replace(/[^0-9]/g,''));
+            } else if (event.target.className === 'term') {
+                event.target.value = Number(event.target.value.replace(/[^0-9]/g,''));
             }
-            
-        }
-
-    };
-
-    listDeposits.oninput = (event) => {
-        
-        console.log('Event INPUT: ', event);
-        if (event.target.nodeName.toLowerCase() === 'input') {
-            listDeposits.formatInput(event.target, event);
         }
     };
 
-    listDeposits.onchange = (event) => {
-
-        console.log('Event CHANGE ', event);
+    listDeposits.calculateDeposit = function (event) {
+        console.log('Function calculateDeposit start... on event ', event);
     
         if (event.target.nodeName.toLowerCase() === 'input' || event.target.nodeName.toLowerCase() === 'select') {
             tr = event.target.closest('tr');
             td = event.target.closest('td');
 
-            if (typeof (event.target.value) === 'string')  {
+            deposit.base = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[2].querySelector('input').value);
+            deposit.replenishment = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[3].querySelector('input').value);
+            deposit.rate = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[4].querySelector('input').value) / 100;
+            deposit.term = listDeposits.rows[tr.rowIndex].cells[5].querySelector('select').value === 'months' ? 
+                convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) :
+                convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) * 12;
+            deposit.rateType = listDeposits.rows[tr.rowIndex].cells[6].querySelector('select').value;
 
-                deposit.base = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[0].querySelector('input').value);
-                deposit.replenishment = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[1].querySelector('input').value);
-                deposit.rate = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[2].querySelector('input').value) / 100;
-                deposit.term = listDeposits.rows[tr.rowIndex].cells[3].querySelector('select').value === 'months' ? 
-                    convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[3].querySelector('input').value) :
-                    convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[3].querySelector('input').value) * 12;
+            console.log('Select value =', listDeposits.rows[tr.rowIndex].cells[5].querySelector('select'));
+            console.log('Select value =', listDeposits.rows[tr.rowIndex].cells[5].querySelector('select').value);
+            console.log('Deposit term =', deposit.term);
 
-                console.log('Select value =', listDeposits.rows[tr.rowIndex].cells[3].querySelector('select'));
-                console.log('Select value =', listDeposits.rows[tr.rowIndex].cells[3].querySelector('select').value);
-                console.log('Deposit term =', deposit.term);
-
-                listDeposits.rows[tr.rowIndex].cells[4].querySelector('input').value = deposit.calculate().toLocaleString('ru', {
-                    style: 'currency',
-                    currency: 'RUB',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-        
-                listDeposits.formatInput(event.target, event);
-            } else {
-                event.target.value = 'Введите число';
-            }
+            listDeposits.rows[tr.rowIndex].cells[7].querySelector('input').value = deposit.calculate().toLocaleString('ru', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         }
     };
+
+    listDeposits.addEventListener('input', listDeposits.formatInput);
+    listDeposits.addEventListener('change', listDeposits.calculateDeposit);
+    listDeposits.addEventListener('focusin', addListBanksToSelect);
