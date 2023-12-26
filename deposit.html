@@ -14,7 +14,7 @@
         </p>
     </header>
     <section class="main">
-        <table>
+        <table class="deposits">
             <tr>
                 <th>Банк</th>
                 <th>Вклад</th>
@@ -27,32 +27,36 @@
             </tr>
             <tr>
                 <td>
-                    <select name="bank" id="">
-                        <option value="">Выберите банк</option>
-                        <!-- <option value="Sber">Сбер</option>
-                        <option value="VTB">ВТБ</option> -->
-                    </select>
-                </td>
-                <td><input type="text" name="deposit" id=""></td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381'></td>
-                <td><input type="text" class= 'percent' value='0 %'></td>
-                <td>
-                    <div class="tdFlexContainer">
-                        <input type="number" class= 'term' min='0' step='1' value=0>
-                        <select name="" id="">
-                            <option value="months">месяцы</option>
-                            <option value="years">годы</option>
+                    <div class="selectWrapper">
+                        <select class="" name="bank" id="">
+                            <option value="">Выберите банк</option>                        
                         </select>
                     </div>
                 </td>
+                <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" id=""></td>
+                <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                <td><input type="text" class="rate" maxlength="5" value="0 %"></td>
                 <td>
-                    <select name="" id="">
-                        <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
-                        <option value="percentInTheEnd">Проценты в конце срока</option>
-                    </select>
+                    <div class="tdFlexContainer">
+                        <input type="number" class= "term" min="0" step="1" max="1200" value=0>
+                        <div class="selectWrapper">
+                            <select name="" class="termUnitOfMeasure">
+                                <option value="months">месяцы</option>
+                                <option value="years">годы</option>
+                            </select>
+                        </div>
+                    </div>
                 </td>
-                <td><input type="text" class= 'currency' value='0,00 &#8381' disabled></td>
+                <td>
+                    <div class="selectWrapper">
+                        <select name="" id="">
+                            <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
+                            <option value="percentInTheEnd">Проценты в конце срока</option>
+                        </select>
+                    </div>
+                </td >
+                <td><input type="text" class= "currency" maxlength="26" value="0,00 &#8381" disabled></td>
             </tr>
             
         </table>

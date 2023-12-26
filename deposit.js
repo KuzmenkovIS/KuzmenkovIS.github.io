@@ -63,58 +63,64 @@ function addListBanksToSelect (event) {
     }
 }
 
-function convertStringToNumberFractionDigits2 (value, event) {
-    let valueNumbersAndDots = '';
-    let indexDotLast = '';
-    let valueBeforeDot = '';
-    let valueAfterDot = '';
-    let valueConverted = '';
+class Converter {
+    constructor () {
 
-    if ( typeof(value)==='string' ) {
-        valueNumbersAndDots = value.replace(/[^0-9,.]/g, '').replace(/,/g,'.');
-        indexDotLast = valueNumbersAndDots.lastIndexOf('.');
-
-        if ((!event && indexDotLast !== -1) || (event && indexDotLast !== -1)) {
-            valueBeforeDot = valueNumbersAndDots.slice(0,indexDotLast).replace(/\./g, '');
-            valueAfterDot = valueNumbersAndDots.slice(indexDotLast, indexDotLast + 3);
-            valueConverted = valueBeforeDot + valueAfterDot;
-        } else if ((event && indexDotLast === -1) 
-                    && 
-                   (event.type === "input" && (event.inputType === "deleteContentForward" || event.inputType === "deleteContentBackward"))) {
-
-                valueBeforeDot = valueNumbersAndDots.slice(0,valueNumbersAndDots.length - 2);
-                valueAfterDot = valueNumbersAndDots.slice(valueNumbersAndDots.length - 2);
-                valueConverted = valueBeforeDot + '.' + valueAfterDot;
-        } else {
-            valueConverted = valueNumbersAndDots;
-        }
-    } else {
-        console.log('Функции convertStringToNumberDecimalDotHundredths передана не строка');
     }
+
+    stringToNumberFractionDigits2 (value, event) {
+        let valueNumbersAndDots = '';
+        let indexDotLast = '';
+        let valueBeforeDot = '';
+        let valueAfterDot = '';
+        let valueConverted = '';
+
+        if ( typeof(value)==='string' ) {
+            valueNumbersAndDots = value.replace(/[^0-9,.]/g, '').replace(/,/g,'.');
+            indexDotLast = valueNumbersAndDots.lastIndexOf('.');
+
+            if ((!event && indexDotLast !== -1) || (event && indexDotLast !== -1)) {
+                valueBeforeDot = valueNumbersAndDots.slice(0,indexDotLast).replace(/\./g, '');
+                valueAfterDot = valueNumbersAndDots.slice(indexDotLast, indexDotLast + 3);
+                valueConverted = valueBeforeDot + valueAfterDot;
+            } else if ((event && indexDotLast === -1) 
+                        && 
+                    (event.type === "input" && (event.inputType === "deleteContentForward" || event.inputType === "deleteContentBackward"))) {
+
+                    valueBeforeDot = valueNumbersAndDots.slice(0,valueNumbersAndDots.length - 2);
+                    valueAfterDot = valueNumbersAndDots.slice(valueNumbersAndDots.length - 2);
+                    valueConverted = valueBeforeDot + '.' + valueAfterDot;
+            } else {
+                valueConverted = valueNumbersAndDots;
+            }
+        } else {
+            console.log('Функции convertStringToNumberDecimalDotHundredths передана не строка');
+        }
+        
+        return Number(valueConverted);  
+    }
+
+    stringToNumberPercent (value) {
+        let valueNumbers = '';
+        let valueConverted = '';
     
-    return Number(valueConverted);
-}
-
-function convertStringToNumberPercent (value) {
-    let valueNumbers = '';
-    let valueConverted = '';
-
-    valueNumbers = value.replace(/[^0-9]/g, '');
-
-    if (typeof(value) === 'string') {
-        if (Number(valueNumbers) >= 100) {
-            valueConverted = 100;
+        valueNumbers = value.replace(/[^0-9]/g, '');
+    
+        if (typeof(value) === 'string') {
+            if (Number(valueNumbers) >= 100) {
+                valueConverted = 100;
+            } else {
+                valueConverted = valueNumbers
+            }
         } else {
-            valueConverted = valueNumbers
+            console.log('Функции converter.stringToNumberPercent передана не строка');
         }
-    } else {
-        console.log('Функции convertStringToNumberPercent передана не строка');
+    
+        return Number(valueConverted/100);
     }
-
-    return Number(valueConverted/100);
 }
 
-
+let converter = new Converter();
 
 let listDeposits = document.querySelector('table');
 
@@ -129,10 +135,10 @@ let listDeposits = document.querySelector('table');
 
             if (event.target.className === 'currency') {
 
-                if ((cursorStart === 0) && (convertStringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
+                if ((cursorStart === 0) && (converter.stringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
                     
                 } else {
-                    event.target.value = convertStringToNumberFractionDigits2(event.target.value, event).toLocaleString('ru', {
+                    event.target.value = converter.stringToNumberFractionDigits2(event.target.value, event).toLocaleString('ru', {
                         style: 'currency',
                         currency: 'RUB',
                         minimumFractionDigits: 2
@@ -178,8 +184,8 @@ let listDeposits = document.querySelector('table');
                     }
                 }
 
-            } else if (event.target.className === 'percent') {
-                event.target.value = convertStringToNumberPercent(event.target.value).toLocaleString('ru', {
+            } else if (event.target.className === 'rate') {
+                event.target.value = converter.stringToNumberPercent(event.target.value).toLocaleString('ru', {
                     style: 'percent',
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
@@ -197,6 +203,10 @@ let listDeposits = document.querySelector('table');
                 }
             } else if (event.target.className === 'term') {
                 event.target.value = Number(event.target.value.replace(/[^0-9]/g,''));
+
+                if (event.target.value >= 999) {
+                    event.target.value = 999;
+                }
             }
         }
     };
@@ -208,12 +218,12 @@ let listDeposits = document.querySelector('table');
             tr = event.target.closest('tr');
             td = event.target.closest('td');
 
-            deposit.base = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[2].querySelector('input').value);
-            deposit.replenishment = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[3].querySelector('input').value);
-            deposit.rate = convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[4].querySelector('input').value) / 100;
+            deposit.base = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[2].querySelector('input').value);
+            deposit.replenishment = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[3].querySelector('input').value);
+            deposit.rate = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[4].querySelector('input').value) / 100;
             deposit.term = listDeposits.rows[tr.rowIndex].cells[5].querySelector('select').value === 'months' ? 
-                convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) :
-                convertStringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) * 12;
+                converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) :
+                converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) * 12;
             deposit.rateType = listDeposits.rows[tr.rowIndex].cells[6].querySelector('select').value;
 
             console.log('Select value =', listDeposits.rows[tr.rowIndex].cells[5].querySelector('select'));

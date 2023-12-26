@@ -16,83 +16,8 @@ header {
     align-items: center;
 }
 
-header > p {
-    margin-left: 32px;
-}
-
-footer {
-    height: 44px;
-    width: 100%;
-
-    background-color: #f6f8fa;
-}
-
-p {
-    margin: 0;
-    padding: 0;
-}
-
-table {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-
-th {
-    height: 24px;
-    border: 1px solid black;
-    padding: 0 6px 0 6px;
-}
-
-td {
-    height: 24px;
-    border: 1px solid black;
-    padding: 0 0px 0 0px;
-}
-
-    .tdFlexContainer {
-        margin: 0;
-        padding: 4px;
-
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-    }
-
-        .tdFlexContainer > input {
-            margin-right: 4px;
-        }
-
-    td > select {
-        margin: 1px 4px 1px 4px;
-        padding: 0;
-    
-    }
-
-
-
-input {
-    height: calc(100% - 2px);
-    width: calc(100% - 8px);
-    margin: 0;
-    padding: 1px 4px 1px 4px;
-    border: none;
-
-    vertical-align: middle;
-    text-align: end;
-}
-
-/* input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type=number] {
-    -moz-appearance: textfield;
-} */
-
-    input:disabled {
-        color: black;
+    header > p {
+        margin-left: 32px;
     }
 
 .main {
@@ -102,4 +27,158 @@ input[type=number] {
     display: flex;
     justify-content: center;
     align-items: start;
+}
+
+    .deposits {
+        height: auto;
+        width: auto;
+        border: 0px solid black;
+        border-collapse: collapse;
+    }
+
+        .deposits th {
+            height: 24px;
+            
+            margin: 0;
+            padding: 0;
+
+            border: 1px solid black;
+        }
+
+        .deposits td {
+            height: 24px;
+            border: 1px solid black;
+            padding: 0 0px 0 0px;
+        }
+
+            .deposits input {
+                margin: 0;
+                padding: 0;
+
+                border: none;
+
+                vertical-align: middle;
+                text-align: end;
+            }
+                .deposits input.nameDeposit {
+                    height: 100%;
+                    width: 180px;
+                    margin: 0;
+                    padding: 0 2px 0 2px;
+                }
+
+                .deposits input.currency {
+                    height: 100%;
+                    width: 188px;
+
+                    padding-right: 2px;
+                }
+
+                .deposits input.rate {
+                    height: 100%;
+                    width: 70px;
+                    padding-right: 2px;
+                }
+
+            .deposits .selectWrapper {
+                position: relative;
+
+                height: 100%;
+
+                padding: 0 4px 0 0;
+                
+                display: flex;
+                justify-content: center;
+                align-items: baseline;
+                flex-wrap: nowrap;
+            }
+
+            .deposits .selectWrapper:hover {
+                background-color: rgb(233, 233, 237);
+            }
+
+            .deposits .selectWrapper:hover select {
+                background-color: rgb(233, 233, 237);
+            }
+
+            .deposits .selectWrapper::after {
+                margin: 0;
+                padding: 0 0 0 4px;
+                
+                font-size: 10px;
+                
+                white-space: nowrap;
+
+                content: "\25BC";
+            }
+
+                .deposits select {
+                    height: 100%;
+
+                    margin: 0;
+                    padding: 0 0 0 4px;
+
+                    appearance: none;
+
+                    background-color: white;
+
+                    border: none;
+                    border-radius: 0;
+
+                }
+                    .deposits select:focus,
+                    .deposits select:hover {
+                        
+                        background-color: inherit;
+
+                        outline: 0;
+                    }
+
+                    .deposits select option {
+
+                        
+                    }
+            
+            .deposits .tdFlexContainer {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                /* padding: 4px; */
+
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+            }
+
+                .deposits .tdFlexContainer input.term {
+                    height: 100%;
+                    width: 50px;
+
+                    margin: 0 4px 0 0;
+                }
+
+                
+
+
+            /* input[type="number"]::-webkit-inner-spin-button,
+            input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            input[type=number] {
+                -moz-appearance: textfield;
+            } */
+
+                .deposits input:disabled {
+                    color: black;
+                }
+
+
+
+footer {
+    height: 44px;
+    width: 100%;
+
+    background-color: #f6f8fa;
 }
