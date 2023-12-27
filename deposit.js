@@ -242,3 +242,13 @@ let listDeposits = document.querySelector('table');
     listDeposits.addEventListener('input', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.calculateDeposit);
     listDeposits.addEventListener('focusin', addListBanksToSelect);
+
+
+
+    let sectionMain = document.querySelector('.main');
+    function showScrollLeftOnMain (event) {
+        console.log('Main scroll left:', event.target.scrollLeft);
+        console.log('Main offset left:', event.target.offsetLeft);
+    }
+
+    sectionMain.addEventListener('scroll', showScrollLeftOnMain);
