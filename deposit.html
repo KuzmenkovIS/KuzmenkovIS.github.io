@@ -10,7 +10,7 @@
 <body>
     <header>
         <div class="headerContainer">
-            <div class="headerContent">
+            <div class="headerTitle">
                 Калькулятор вкладов
             </div>
         </div>
@@ -35,7 +35,7 @@
                         </select>
                     </div>
                 </td>
-                <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" id=""></td>
+                <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" id="" placeholder="Название вклада"></td>
                 <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
                 <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
                 <td><input type="text" class="rate" maxlength="5" value="0 %"></td>
@@ -60,7 +60,39 @@
                 </td >
                 <td><input type="text" class= "currency" maxlength="26" value="0,00 &#8381" disabled></td>
             </tr>
-            
+            <tr>
+                <td>
+                    <div class="selectWrapper">
+                        <select class="" name="bank" id="">
+                            <option value="">Выберите банк</option>                        
+                        </select>
+                    </div>
+                </td>
+                <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" id="" placeholder="Название вклада"></td>
+                <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                <td><input type="text" class="rate" maxlength="5" value="0 %"></td>
+                <td>
+                    <div class="tdFlexContainer">
+                        <input type="number" class= "term" min="0" step="1" max="1200" value=0>
+                        <div class="selectWrapper">
+                            <select name="" class="termUnitOfMeasure">
+                                <option value="months">месяцы</option>
+                                <option value="years">годы</option>
+                            </select>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="selectWrapper">
+                        <select name="" id="">
+                            <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
+                            <option value="percentInTheEnd">Проценты в конце срока</option>
+                        </select>
+                    </div>
+                </td >
+                <td><input type="text" class= "currency" maxlength="26" value="0,00 &#8381" disabled></td>
+            </tr>
         </table>
     </section>
     <footer>
