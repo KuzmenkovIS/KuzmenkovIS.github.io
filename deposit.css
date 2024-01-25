@@ -2,6 +2,9 @@
 
 :root {
     --color-background: #FFFFFF;
+    /* --color-background-hover: #E9E9ED; */
+    --color-background-hover: #F7F7F7;
+    --color-background-active: #B3DBFF;
     --color-background-disabled: #F7F7F7;
     --color-border: #EBEBEB;
     --color-outline: #6BA2FF;
@@ -107,7 +110,7 @@ header {
         }
 
         .deposits td {
-            height: 24px;
+            height: 26px;
 
             /* border: 1px solid var(--color-border); */
             border-bottom: 1px solid var(--color-border);
@@ -119,6 +122,16 @@ header {
             font-size: 12px;
             font-weight: 400;
           
+        }
+
+        .deposits th:first-child,
+        .deposits td:first-child {
+            padding: 0 0 0 24px;
+        }
+
+        .deposits th:last-child,
+        .deposits td:last-child {
+            padding: 0 24px 0 24px;
         }
 
             .deposits input {
@@ -173,7 +186,7 @@ header {
 
             .deposits .selectWrapper:hover,
             .deposits .selectWrapper:focus-within {
-                background-color: rgb(233, 233, 237);
+                background-color: var(--color-background-hover);
             }
 
                 .deposits .selectWrapper::after {
@@ -242,13 +255,64 @@ header {
                     padding: 0;
                 }
 
+            .deposits .tdFlexContainerLastRow {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+                .deposits .tdFlexContainerLastRow button {
+                    height: 100%;
+                    width: 100%;
+                }
+
             .deposits input:disabled {
                 color: black;
 
                 background-color: var(--color-background-disabled);
             }
 
+        .deposits tr:last-child td {
+            margin: 0;
+            padding: 0;
+        }
 
+        .deposits button {
+            height: 100%;
+            width: 26px;
+            
+            margin: 0 5px;
+            padding: 0;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background-color: transparent;
+
+            border: none;
+        }
+
+        .deposits button:first-child {
+            margin-left: 0;
+        }
+
+        .deposits button:last-child {
+            margin-right: 0;
+        }
+
+        .deposits button:hover {
+            background-color: var(--color-background-hover);
+        }
+
+        .deposits button:active {
+            background-color: var(--color-background-active);
+        }
 
 footer {
     height: 44px;
