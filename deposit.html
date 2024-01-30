@@ -17,71 +17,119 @@
     </header>
     <section class="main">
         <table class="deposits">
-            <tr>
-                <th>Банк</th>
-                <th>Вклад</th>
-                <th>Первоначальный взнос</th>
-                <th>Пополнение</th>
-                <th>Ставка</th>
-                <th>Срок</th>
-                <th>Начисление процентов</th>
-                <th>Итого</th>
-                <th></th>
-            </tr>
-            <tr>
-                <td>
-                    <div class="selectWrapper">
-                        <select class="" name="bank" id="">
-                            <option value="">Выберите банк</option>                        
-                        </select>
-                    </div>
-                </td>
-                <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" id="" placeholder="Название вклада"></td>
-                <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
-                <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
-                <td><input type="text" class="rate" maxlength="5" value="0 %"></td>
-                <td>
-                    <div class="tdFlexContainer">
-                        <input type="number" class= "term" min="0" step="1" max="1200" value=0>
+            <tbody>
+                <tr>
+                    <th>Банк</th>
+                    <th>Вклад</th>
+                    <th>Первоначальный взнос</th>
+                    <th>Пополнение</th>
+                    <th>Ставка</th>
+                    <th>Срок</th>
+                    <th>Начисление процентов</th>
+                    <th>Итого</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <td>
                         <div class="selectWrapper">
-                            <select name="" class="termUnitOfMeasure">
-                                <option value="months">месяцы</option>
-                                <option value="years">годы</option>
+                            <select class="bank" name="bank" id="">
+                                <option value="">Выберите банк</option>                        
                             </select>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="selectWrapper">
-                        <select name="" id="">
-                            <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
-                            <option value="percentInTheEnd">Проценты в конце срока</option>
-                        </select>
-                    </div>
-                </td >
-                <td><input type="text" class= "currency" maxlength="26" value="0,00 &#8381" disabled></td>
-                <td>
-                    <div class="tdFlexContainer">
-                        <button type="button">
-                            <img src="images/plus-solid.svg" alt="" height="20px" width="20px">
-                        </button>
-                        <button type="button">
-                            <img src="images/copy-solid.svg" alt="" height="16px" width="16px">
-                        </button>
-                        <button type="button">
-                            <img src="images/xmark-solid.svg" alt="" height="24px" width="24px">
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="9">
-                    <div class="tdFlexContainerLastRow">
-                        <button type="button">
-                            <img src="images/plus-solid-grey-heavy.svg" alt="" height="20px" width="20px">
-                        </button>
-                </td>
-            </tr>
+                    </td>
+                    <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" placeholder="Название вклада"></td>
+                    <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                    <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                    <td><input type="text" class="rate" maxlength="5" value="0 %"></td>
+                    <td>
+                        <div class="tdFlexContainer">
+                            <input type="number" class= "term" min="0" step="1" max="1200" value=0>
+                            <div class="selectWrapper">
+                                <select name="" class="termUnitOfMeasure">
+                                    <option value="months">месяцы</option>
+                                    <option value="years">годы</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="selectWrapper">
+                            <select name="" id="">
+                                <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
+                                <option value="percentInTheEnd">Проценты в конце срока</option>
+                            </select>
+                        </div>
+                    </td >
+                    <td><input type="text" class= "currency" maxlength="26" value="0,00 &#8381" disabled></td>
+                    <td>
+                        <div class="tdFlexContainer">
+                            <button class="btnAddDepositAfter" type="button">
+                                <img src="images/plus-solid.svg" alt="" height="20px" width="20px">
+                            </button>
+                            <button type="button">
+                                <img src="images/copy-solid.svg" alt="" height="16px" width="16px">
+                            </button>
+                            <button type="button">
+                                <img src="images/xmark-solid.svg" alt="" height="24px" width="24px">
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="selectWrapper">
+                            <select class="" name="bank" id="">
+                                <option value="">Выберите банк</option>                        
+                            </select>
+                        </div>
+                    </td>
+                    <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" id="" placeholder="Название вклада"></td>
+                    <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                    <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
+                    <td><input type="text" class="rate" maxlength="5" value="0 %"></td>
+                    <td>
+                        <div class="tdFlexContainer">
+                            <input type="number" class= "term" min="0" step="1" max="1200" value=0>
+                            <div class="selectWrapper">
+                                <select name="" class="termUnitOfMeasure">
+                                    <option value="months">месяцы</option>
+                                    <option value="years">годы</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="selectWrapper">
+                            <select name="" id="">
+                                <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
+                                <option value="percentInTheEnd">Проценты в конце срока</option>
+                            </select>
+                        </div>
+                    </td >
+                    <td><input type="text" class= "currency" maxlength="26" value="0,00 &#8381" disabled></td>
+                    <td>
+                        <div class="tdFlexContainer">
+                            <button class="btnAddDepositAfter" type="button">
+                                <img src="images/plus-solid.svg" alt="" height="20px" width="20px">
+                            </button>
+                            <button type="button">
+                                <img src="images/copy-solid.svg" alt="" height="16px" width="16px">
+                            </button>
+                            <button type="button">
+                                <img src="images/xmark-solid.svg" alt="" height="24px" width="24px">
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="9">
+                        <div class="tdFlexContainerLastRow">
+                            <button type="button" class="btnAddDepositToTheEnd">
+                                <img src="images/plus-solid-grey-heavy.svg" alt="" height="20px" width="20px">
+                            </button>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </section>
     <footer>

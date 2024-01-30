@@ -41,15 +41,9 @@ let deposit = {
 }
 
 function addListBanksToSelect (event) {
-    console.log('Event: ', event);
-    console.log('Select Banks Step 1');
-    if (event.type === 'focusin' && event.target.nodeName.toLowerCase() === 'select' && event.target.name === 'bank') {
-        console.log('Select Banks Step 2');
-        console.log('Select property options: ', event.target.options);
-        console.log('Select property length: ', event.target.length);
+    if (event.type === 'focusin' && event.target.nodeName.toLowerCase() === 'select' && event.target.className === 'bank') {
 
         if (event.target.length > 1) {
-            console.log('Delete old select options');
             event.target.length = 1;
         }
 
@@ -125,8 +119,6 @@ let converter = new Converter();
 let listDeposits = document.querySelector('table');
 
     listDeposits.formatInput = function (event) {
-
-        console.log('Function formatInput start... on event: ', event);
 
         if (event.target.nodeName.toLowerCase() === 'input' && typeof (event.target.value) === 'string') {
             let valueLengthStart = event.target.value.length;
@@ -212,7 +204,6 @@ let listDeposits = document.querySelector('table');
     };
 
     listDeposits.calculateDeposit = function (event) {
-        console.log('Function calculateDeposit start... on event ', event);
     
         if (event.target.nodeName.toLowerCase() === 'input' || event.target.nodeName.toLowerCase() === 'select') {
             tr = event.target.closest('tr');
@@ -226,10 +217,6 @@ let listDeposits = document.querySelector('table');
                 converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) * 12;
             deposit.rateType = listDeposits.rows[tr.rowIndex].cells[6].querySelector('select').value;
 
-            console.log('Select value =', listDeposits.rows[tr.rowIndex].cells[5].querySelector('select'));
-            console.log('Select value =', listDeposits.rows[tr.rowIndex].cells[5].querySelector('select').value);
-            console.log('Deposit term =', deposit.term);
-
             listDeposits.rows[tr.rowIndex].cells[7].querySelector('input').value = deposit.calculate().toLocaleString('ru', {
                 style: 'currency',
                 currency: 'RUB',
@@ -239,16 +226,232 @@ let listDeposits = document.querySelector('table');
         }
     };
 
+    listDeposits.addDepositAfter = function (event) {
+        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnAddDepositAfter') ||
+            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnAddDepositAfter')) {
+            let trCurrent = event.target;
+
+            while (trCurrent.nodeName.toLowerCase() !== 'tr') {
+                trCurrent = trCurrent.parentElement;
+            }
+
+            let depositNew = new Deposit();
+            trCurrent.after(depositNew.tr);
+
+        };
+    };
+
+    listDeposits.addDepositToTheEnd = function (event) {
+
+        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnAddDepositToTheEnd') ||
+            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnAddDepositToTheEnd')) {
+
+            let trLast = event.target;
+
+            while (trLast.nodeName.toLowerCase() !== 'tr') {
+                trLast = trLast.parentElement;
+            }
+
+            let depositNew = new Deposit();
+            trLast.before(depositNew.tr);
+
+        };
+    };
+
     listDeposits.addEventListener('input', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.calculateDeposit);
     listDeposits.addEventListener('focusin', addListBanksToSelect);
+    listDeposits.addEventListener('click', listDeposits.addDepositAfter);
+    listDeposits.addEventListener('click',listDeposits.addDepositToTheEnd);
 
 
 
-    let sectionMain = document.querySelector('.main');
-    function showScrollLeftOnMain (event) {
-        console.log('Main scroll left:', event.target.scrollLeft);
-        console.log('Main offset left:', event.target.offsetLeft);
+let sectionMain = document.querySelector('.main');
+function showScrollLeftOnMain (event) {
+    console.log('Main scroll left:', event.target.scrollLeft);
+    console.log('Main offset left:', event.target.offsetLeft);
+}
+
+sectionMain.addEventListener('scroll', showScrollLeftOnMain);
+
+class Deposit {
+    constructor () {
+        this.tr = document.createElement('tr');
+
+        this.tdNameBank = document.createElement('td');
+
+            this.tdNameBank_selectWrapper = document.createElement('div');
+            this.tdNameBank_selectWrapper.className = 'selectWrapper';
+
+                this.tdNameBank_select = document.createElement('select');
+                this.tdNameBank_select.className = 'bank';
+
+                    this.tdNameBank_option = document.createElement('option');
+                    this.tdNameBank_option.text = 'Выберите банк';
+
+            this.tdNameBank_select.append(this.tdNameBank_option);
+            this.tdNameBank_selectWrapper.append(this.tdNameBank_select);
+            this.tdNameBank.append(this.tdNameBank_selectWrapper);
+
+        this.tdNameDeposit = document.createElement('td');
+
+            this.tdNameDeposit_input = document.createElement('input');
+            this.tdNameDeposit_input.type = 'text';
+            this.tdNameDeposit_input.className = 'nameDeposit';
+            this.tdNameDeposit_input.maxLength = 20;
+            this.tdNameDeposit_input.name = 'deposit';
+            this.tdNameDeposit_input.placeholder = 'Название вклада';
+
+            this.tdNameDeposit.append(this.tdNameDeposit_input);
+
+        this.tdBase = document.createElement('td');
+
+            this.tdBase_input = document.createElement('input');
+            this.tdBase_input.type = 'text';
+            this.tdBase_input.className = 'currency';
+            this.tdBase_input.maxLength = 26;
+            this.tdBase_input.value = '0,00 \u20BD';
+
+            this.tdBase.append(this.tdBase_input);
+
+        this.tdReplenishment = document.createElement('td');
+
+            this.tdReplenishment_input = document.createElement('input');
+            this.tdReplenishment_input.type = 'text';
+            this.tdReplenishment_input.className = 'currency';
+            this.tdReplenishment_input.maxLength = 26;
+            this.tdReplenishment_input.value = '0,00 \u20BD';
+
+            this.tdReplenishment.append(this.tdReplenishment_input);
+
+        this.tdRate = document.createElement('td');
+
+            this.tdRate_input = document.createElement('input');
+            this.tdRate_input.type = 'text';
+            this.tdRate_input.className = 'rate';
+            this.tdRate_input.maxLength = 5;
+            this.tdRate_input.value = '0 %';
+
+            this.tdRate.append(this.tdRate_input);
+
+        this.tdTerm = document.createElement('td');
+
+            this.tdTerm_flexContainer = document.createElement('div');
+            this.tdTerm_flexContainer.className = 'tdFlexContainer';
+
+                this.tdTerm_input = document.createElement('input');
+                this.tdTerm_input.type = 'number';
+                this.tdTerm_input.className = 'term';
+                this.tdTerm_input.min = 0;
+                this.tdTerm_input.step = 1;
+                this.tdTerm_input.max = 1200;
+                this.tdTerm_input.value = 0;
+
+                this.tdTerm_selectWrapper = document.createElement('div');
+                this.tdTerm_selectWrapper.className = 'selectWrapper';
+
+                    this.tdTerm_select = document.createElement('select');
+                    this.tdTerm_select.className = 'termUnitOfMeasure';
+
+                        this.tdTerm_option_months = document.createElement('option');
+                        this.tdTerm_option_months.value = 'months';
+                        this.tdTerm_option_months.text = 'месяцы';
+
+                        this.tdTerm_option_years = document.createElement('option');
+                        this.tdTerm_option_years.value = 'years';
+                        this.tdTerm_option_years.text = 'годы';
+
+            this.tdTerm_select.append(this.tdTerm_option_months);
+            this.tdTerm_select.append(this.tdTerm_option_years);
+            this.tdTerm_selectWrapper.append(this.tdTerm_select);
+            this.tdTerm_flexContainer.append(this.tdTerm_input);
+            this.tdTerm_flexContainer.append(this.tdTerm_selectWrapper);
+            this.tdTerm.append(this.tdTerm_flexContainer);
+
+
+        this.tdRateType = document.createElement('td');
+
+            this.tdRateType_selectWrapper = document.createElement('div');
+            this.tdRateType_selectWrapper.className = 'selectWrapper';
+
+                this.tdRateType_select = document.createElement('select');
+                
+                    this.tdRateType_option_capitalizationPerMonth = document.createElement('option');
+                    this.tdRateType_option_capitalizationPerMonth.value = 'capitalizationPerMonth';
+                    this.tdRateType_option_capitalizationPerMonth.text = 'Ежемесячная капитализация';
+
+                    this.tdRateType_option_percentInTheEnd = document.createElement('option');
+                    this.tdRateType_option_percentInTheEnd.value = 'percentInTheEnd';
+                    this.tdRateType_option_percentInTheEnd.text = 'Проценты в конце срока';
+
+            this.tdRateType_select.append(this.tdRateType_option_capitalizationPerMonth);
+            this.tdRateType_select.append(this.tdRateType_option_percentInTheEnd);
+            this.tdRateType_selectWrapper.append(this.tdRateType_select);
+            this.tdRateType.append(this.tdRateType_selectWrapper);
+
+        this.tdTotal = document.createElement('td');
+
+            this.tdTotal_input = document.createElement('input');
+            this.tdTotal_input.type = 'text';
+            this.tdTotal_input.className = 'currency';
+            this.tdTotal_input.maxLength = 26;
+            this.tdTotal_input.value = '0,00 \u20BD';
+            this.tdTotal_input.disabled = true;
+
+            this.tdTotal.append(this.tdTotal_input);
+
+        this.tdControl = document.createElement('td');
+
+            this.tdControl_flexContainer = document.createElement('div');
+            this.tdControl_flexContainer.className = 'tdFlexContainer';
+
+                this.tdControl_button_add = document.createElement('button');
+                this.tdControl_button_add.type = 'button';
+                this.tdControl_button_add.className = 'btnAddDepositAfter';
+
+                    this.tdControl_img_add = document.createElement('img');
+                    this.tdControl_img_add.src = "images/plus-solid.svg";
+                    this.tdControl_img_add.height = 20;
+                    this.tdControl_img_add.width = 20;
+
+
+                this.tdControl_button_copy = document.createElement('button');
+                this.tdControl_button_copy.type = 'button';
+
+                    this.tdControl_img_copy = document.createElement('img');
+                    this.tdControl_img_copy.src = 'images/copy-solid.svg';
+                    this.tdControl_img_copy.height = 16;
+                    this.tdControl_img_copy.width = 16;
+                
+                this.tdControl_button_delete = document.createElement('button');
+                this.tdControl_button_delete.type = 'button';
+
+                    this.tdControl_img_delete = document.createElement('img');
+                    this.tdControl_img_delete.src = 'images/xmark-solid.svg';
+                    this.tdControl_img_delete.height = 24;
+                    this.tdControl_img_delete.width = 24;
+
+            this.tdControl_button_add.append(this.tdControl_img_add);
+            this.tdControl_button_copy.append(this.tdControl_img_copy);
+            this.tdControl_button_delete.append(this.tdControl_img_delete);
+            this.tdControl_flexContainer.append(this.tdControl_button_add);
+            this.tdControl_flexContainer.append(this.tdControl_button_copy);
+            this.tdControl_flexContainer.append(this.tdControl_button_delete);
+            this.tdControl.append(this.tdControl_flexContainer);
+
+        this.tr.append(this.tdNameBank);
+        this.tr.append(this.tdNameDeposit);
+        this.tr.append(this.tdBase);
+        this.tr.append(this.tdReplenishment);
+        this.tr.append(this.tdRate);
+        this.tr.append(this.tdTerm);
+        this.tr.append(this.tdRateType);
+        this.tr.append(this.tdTotal);
+        this.tr.append(this.tdControl);
+
     }
+}
 
-    sectionMain.addEventListener('scroll', showScrollLeftOnMain);
+
+
+
