@@ -57,222 +57,6 @@ function addListBanksToSelect (event) {
     }
 }
 
-class Converter {
-    constructor () {
-
-    }
-
-    stringToNumberFractionDigits2 (value, event) {
-        let valueNumbersAndDots = '';
-        let indexDotLast = '';
-        let valueBeforeDot = '';
-        let valueAfterDot = '';
-        let valueConverted = '';
-
-        if ( typeof(value)==='string' ) {
-            valueNumbersAndDots = value.replace(/[^0-9,.]/g, '').replace(/,/g,'.');
-            indexDotLast = valueNumbersAndDots.lastIndexOf('.');
-
-            if ((!event && indexDotLast !== -1) || (event && indexDotLast !== -1)) {
-                valueBeforeDot = valueNumbersAndDots.slice(0,indexDotLast).replace(/\./g, '');
-                valueAfterDot = valueNumbersAndDots.slice(indexDotLast, indexDotLast + 3);
-                valueConverted = valueBeforeDot + valueAfterDot;
-            } else if ((event && indexDotLast === -1) 
-                        && 
-                    (event.type === "input" && (event.inputType === "deleteContentForward" || event.inputType === "deleteContentBackward"))) {
-
-                    valueBeforeDot = valueNumbersAndDots.slice(0,valueNumbersAndDots.length - 2);
-                    valueAfterDot = valueNumbersAndDots.slice(valueNumbersAndDots.length - 2);
-                    valueConverted = valueBeforeDot + '.' + valueAfterDot;
-            } else {
-                valueConverted = valueNumbersAndDots;
-            }
-        } else {
-            console.log('Функции convertStringToNumberDecimalDotHundredths передана не строка');
-        }
-        
-        return Number(valueConverted);  
-    }
-
-    stringToNumberPercent (value) {
-        let valueNumbers = '';
-        let valueConverted = '';
-    
-        valueNumbers = value.replace(/[^0-9]/g, '');
-    
-        if (typeof(value) === 'string') {
-            if (Number(valueNumbers) >= 100) {
-                valueConverted = 100;
-            } else {
-                valueConverted = valueNumbers
-            }
-        } else {
-            console.log('Функции converter.stringToNumberPercent передана не строка');
-        }
-    
-        return Number(valueConverted/100);
-    }
-}
-
-let converter = new Converter();
-
-let listDeposits = document.querySelector('table');
-
-    listDeposits.formatInput = function (event) {
-
-        if (event.target.nodeName.toLowerCase() === 'input' && typeof (event.target.value) === 'string') {
-            let valueLengthStart = event.target.value.length;
-            let cursorStart = event.target.selectionStart;
-            let cursorEnd = event.target.selectionEnd;
-
-            if (event.target.className === 'currency') {
-
-                if ((cursorStart === 0) && (converter.stringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
-                    
-                } else {
-                    event.target.value = converter.stringToNumberFractionDigits2(event.target.value, event).toLocaleString('ru', {
-                        style: 'currency',
-                        currency: 'RUB',
-                        minimumFractionDigits: 2
-                    });
-                    
-                    if (event.target.value.length === 3) {
-                        event.target.selectionStart = 1;
-                        event.target.selectionEnd = 1;
-                    } else if (cursorStart >= (event.target.value.length - 2)) {
-                        event.target.selectionStart = event.target.value.length - 2;
-                        event.target.selectionEnd = event.target.value.length - 2;
-                    } else if (valueLengthStart > event.target.value.length) {
-                        if (cursorStart === 0) {
-                            event.target.selectionStart = cursorStart;
-                            event.target.selectionEnd = cursorEnd;
-                        } else if (event.target.value.length - cursorStart === 3) {
-                            event.target.selectionStart = cursorStart;
-                            event.target.selectionEnd = cursorEnd;
-                        } else {
-                            event.target.selectionStart = cursorStart - 1;
-                            event.target.selectionEnd = cursorEnd - 1;
-                        }
-                    } else if (valueLengthStart < event.target.value.length) {
-                        if (cursorStart === event.target.value.length - 5 && event.inputType === "deleteContentForward") {
-                            event.target.selectionStart = cursorStart + 1;
-                            event.target.selectionEnd = cursorEnd + 1;
-                        } else if (cursorStart === event.target.value.length - 3 || cursorStart === event.target.value.length - 4 || cursorStart === event.target.value.length - 5) {
-                            event.target.selectionStart = cursorStart;
-                            event.target.selectionEnd = cursorEnd;
-                        } else if (event.inputType === "deleteContentBackward") {
-                            event.target.selectionStart = cursorStart;
-                            event.target.selectionEnd = cursorEnd;
-                        } else {
-                            event.target.selectionStart = cursorStart + 1;
-                            event.target.selectionEnd = cursorEnd + 1;
-                        }
-                    } else if ( valueLengthStart === 5 && cursorStart === 0) {
-                        event.target.selectionStart = cursorStart + 1;
-                        event.target.selectionEnd = cursorEnd + 1;
-                    } else {
-                        event.target.selectionStart = cursorStart;
-                        event.target.selectionEnd = cursorEnd;
-                    }
-                }
-
-            } else if (event.target.className === 'rate') {
-                event.target.value = converter.stringToNumberPercent(event.target.value).toLocaleString('ru', {
-                    style: 'percent',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-
-                if (cursorStart >= (event.target.value.length - 2)) {
-                    event.target.selectionStart = event.target.value.length - 2;
-                    event.target.selectionEnd = event.target.value.length - 2;
-                } else if ((event.target.value.replace(/\s/g, '') === '0%') && event.inputType === 'deleteContentForward') {
-                    event.target.selectionStart = 1;
-                    event.target.selectionEnd = 1;
-                } else {
-                    event.target.selectionStart = cursorStart;
-                    event.target.selectionEnd = cursorEnd;
-                }
-            } else if (event.target.className === 'term') {
-                event.target.value = Number(event.target.value.replace(/[^0-9]/g,''));
-
-                if (event.target.value >= 999) {
-                    event.target.value = 999;
-                }
-            }
-        }
-    };
-
-    listDeposits.calculateDeposit = function (event) {
-    
-        if (event.target.nodeName.toLowerCase() === 'input' || event.target.nodeName.toLowerCase() === 'select') {
-            tr = event.target.closest('tr');
-            td = event.target.closest('td');
-
-            deposit.base = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[2].querySelector('input').value);
-            deposit.replenishment = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[3].querySelector('input').value);
-            deposit.rate = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[4].querySelector('input').value) / 100;
-            deposit.term = listDeposits.rows[tr.rowIndex].cells[5].querySelector('select').value === 'months' ? 
-                converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) :
-                converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) * 12;
-            deposit.rateType = listDeposits.rows[tr.rowIndex].cells[6].querySelector('select').value;
-
-            listDeposits.rows[tr.rowIndex].cells[7].querySelector('input').value = deposit.calculate().toLocaleString('ru', {
-                style: 'currency',
-                currency: 'RUB',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-    };
-
-    listDeposits.addDepositAfter = function (event) {
-        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnAddDepositAfter') ||
-            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnAddDepositAfter')) {
-            let trCurrent = event.target;
-
-            while (trCurrent.nodeName.toLowerCase() !== 'tr') {
-                trCurrent = trCurrent.parentElement;
-            }
-
-            let depositNew = new Deposit();
-            trCurrent.after(depositNew.tr);
-
-        };
-    };
-
-    listDeposits.addDepositToTheEnd = function (event) {
-
-        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnAddDepositToTheEnd') ||
-            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnAddDepositToTheEnd')) {
-
-            let trLast = event.target;
-
-            while (trLast.nodeName.toLowerCase() !== 'tr') {
-                trLast = trLast.parentElement;
-            }
-
-            let depositNew = new Deposit();
-            trLast.before(depositNew.tr);
-
-        };
-    };
-
-    listDeposits.addEventListener('input', listDeposits.formatInput);
-    listDeposits.addEventListener('change', listDeposits.calculateDeposit);
-    listDeposits.addEventListener('focusin', addListBanksToSelect);
-    listDeposits.addEventListener('click', listDeposits.addDepositAfter);
-    listDeposits.addEventListener('click',listDeposits.addDepositToTheEnd);
-
-
-
-let sectionMain = document.querySelector('.main');
-function showScrollLeftOnMain (event) {
-    console.log('Main scroll left:', event.target.scrollLeft);
-    console.log('Main offset left:', event.target.offsetLeft);
-}
-
-sectionMain.addEventListener('scroll', showScrollLeftOnMain);
 
 class Deposit {
     constructor () {
@@ -329,8 +113,8 @@ class Deposit {
             this.tdRate_input = document.createElement('input');
             this.tdRate_input.type = 'text';
             this.tdRate_input.className = 'rate';
-            this.tdRate_input.maxLength = 5;
-            this.tdRate_input.value = '0 %';
+            this.tdRate_input.maxLength = 8;
+            this.tdRate_input.value = '0,00 %';
 
             this.tdRate.append(this.tdRate_input);
 
@@ -417,6 +201,7 @@ class Deposit {
 
                 this.tdControl_button_copy = document.createElement('button');
                 this.tdControl_button_copy.type = 'button';
+                this.tdControl_button_copy.className = 'btnCopyDeposit';
 
                     this.tdControl_img_copy = document.createElement('img');
                     this.tdControl_img_copy.src = 'images/copy-solid.svg';
@@ -425,6 +210,7 @@ class Deposit {
                 
                 this.tdControl_button_delete = document.createElement('button');
                 this.tdControl_button_delete.type = 'button';
+                this.tdControl_button_delete.className = 'btnDeleteDeposit';
 
                     this.tdControl_img_delete = document.createElement('img');
                     this.tdControl_img_delete.src = 'images/xmark-solid.svg';
@@ -451,6 +237,335 @@ class Deposit {
 
     }
 }
+
+class Converter {
+    constructor () {
+
+    }
+
+    stringToNumberFractionDigits2 (value, event) {
+        let valueNumbersAndDots = '';
+        let indexDotLast = '';
+        let valueBeforeDot = '';
+        let valueAfterDot = '';
+        let valueConverted = '';
+
+        if ( typeof(value)==='string' ) {
+            valueNumbersAndDots = value.replace(/[^0-9,.]/g, '').replace(/,/g,'.');
+            indexDotLast = valueNumbersAndDots.lastIndexOf('.');
+
+            if ((!event && indexDotLast !== -1) || (event && indexDotLast !== -1)) {
+                valueBeforeDot = valueNumbersAndDots.slice(0,indexDotLast).replace(/\./g, '');
+                valueAfterDot = valueNumbersAndDots.slice(indexDotLast, indexDotLast + 3);
+                valueConverted = valueBeforeDot + valueAfterDot;
+            } else if ((event && indexDotLast === -1) 
+                        && 
+                       (event.type === "input" && (event.inputType === "deleteContentForward" || event.inputType === "deleteContentBackward"))) {
+
+                    valueBeforeDot = valueNumbersAndDots.slice(0,valueNumbersAndDots.length - 2);
+                    valueAfterDot = valueNumbersAndDots.slice(valueNumbersAndDots.length - 2);
+                    valueConverted = valueBeforeDot + '.' + valueAfterDot;
+            } else {
+                valueConverted = valueNumbersAndDots;
+            }
+        } else {
+            console.log('Функции stringToNumberFractionDigits2 передана не строка');
+        }
+        
+        return Number(valueConverted);  
+    }
+
+    stringToNumberPercent (value) {
+        let valueNumbers = '';
+        let valueConverted = '';
+    
+        valueNumbers = value.replace(/[^0-9]/g, '');
+    
+        if (typeof(value) === 'string') {
+            if (Number(valueNumbers) >= 100) {
+                valueConverted = 100;
+            } else {
+                valueConverted = valueNumbers
+            }
+        } else {
+            console.log('Функции converter.stringToNumberPercent передана не строка');
+        }
+
+        return Number(valueConverted/100);
+    }
+
+    stringToNumberPercentFractionDigits2 (value) {
+
+        let valueNumbersAndDots = '';
+        let indexDotLast = '';
+        let valueBeforeDot = '';
+        let valueAfterDot = '';
+        let valueConverted = '';
+
+        if ( typeof(value)==='string' ) {
+            valueNumbersAndDots = value.replace(/[^0-9,.]/g, '').replace(/,/g,'.');
+            indexDotLast = valueNumbersAndDots.lastIndexOf('.');
+
+            if ((!event && indexDotLast !== -1) || (event && indexDotLast !== -1)) {
+                valueBeforeDot = valueNumbersAndDots.slice(0,indexDotLast).replace(/\./g, '');
+                valueAfterDot = valueNumbersAndDots.slice(indexDotLast, indexDotLast + 3);
+                valueConverted = valueBeforeDot + valueAfterDot;
+            } else if ((event && indexDotLast === -1) 
+                        && 
+                       (event.type === "input" && (event.inputType === "deleteContentForward" || event.inputType === "deleteContentBackward"))) {
+
+                    valueBeforeDot = valueNumbersAndDots.slice(0,valueNumbersAndDots.length - 2);
+                    valueAfterDot = valueNumbersAndDots.slice(valueNumbersAndDots.length - 2);
+                    valueConverted = valueBeforeDot + '.' + valueAfterDot;
+            } else {
+                valueConverted = valueNumbersAndDots;
+            }
+        } else {
+            console.log('Функции stringToNumberPercentFractionDigits2 передана не строка');
+        }
+
+        if (Number(valueConverted) >= 100) {
+            valueConverted = 100;
+        }
+
+        return Number(valueConverted/100);
+    }
+}
+
+let converter = new Converter();
+
+let listDeposits = document.querySelector('table');
+
+    listDeposits.formatInput = function (event) {
+
+        if (event.target.nodeName.toLowerCase() === 'input' && typeof (event.target.value) === 'string') {
+            let valueLengthStart = event.target.value.length;
+            let cursorStart = event.target.selectionStart;
+            let cursorEnd = event.target.selectionEnd;
+
+            if (event.target.className === 'currency') {
+
+                if ((cursorStart === 0) && (converter.stringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
+                    
+                } else {
+                    event.target.value = converter.stringToNumberFractionDigits2(event.target.value, event).toLocaleString('ru', {
+                        style: 'currency',
+                        currency: 'RUB',
+                        minimumFractionDigits: 2
+                    });
+                    
+                    if (event.target.value.length === 3) {
+                        event.target.selectionStart = 1;
+                        event.target.selectionEnd = 1;
+                    } else if (cursorStart >= (event.target.value.length - 2)) {
+                        event.target.selectionStart = event.target.value.length - 2;
+                        event.target.selectionEnd = event.target.value.length - 2;
+                    } else if (valueLengthStart > event.target.value.length) {
+                        if (cursorStart === 0) {
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
+                        } else if (event.target.value.length - cursorStart === 3) {
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
+                        } else {
+                            event.target.selectionStart = cursorStart - 1;
+                            event.target.selectionEnd = cursorEnd - 1;
+                        }
+                    } else if (valueLengthStart < event.target.value.length) {
+                        if (cursorStart === event.target.value.length - 5 && event.inputType === "deleteContentForward") {
+                            event.target.selectionStart = cursorStart + 1;
+                            event.target.selectionEnd = cursorEnd + 1;
+                        } else if (cursorStart === event.target.value.length - 3 || cursorStart === event.target.value.length - 4 || cursorStart === event.target.value.length - 5) {
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
+                        } else if (event.inputType === "deleteContentBackward") {
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
+                        } else {
+                            event.target.selectionStart = cursorStart + 1;
+                            event.target.selectionEnd = cursorEnd + 1;
+                        }
+                    } else if ( valueLengthStart === 5 && cursorStart === 0) {
+                        event.target.selectionStart = cursorStart + 1;
+                        event.target.selectionEnd = cursorEnd + 1;
+                    } else {
+                        event.target.selectionStart = cursorStart;
+                        event.target.selectionEnd = cursorEnd;
+                    }
+                }
+
+            } else if (event.target.className === 'rate') {
+                event.target.value = converter.stringToNumberPercentFractionDigits2(event.target.value).toLocaleString('ru', {
+                    style: 'percent',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                // Закоментированный код ниже для случая процентов без долей "100 %". Он может еще пригодиться, поэтому пока сохряняю
+                // if (cursorStart >= (event.target.value.length - 2)) {
+                //     event.target.selectionStart = event.target.value.length - 2;
+                //     event.target.selectionEnd = event.target.value.length - 2;
+                // } else if ((event.target.value.replace(/\s/g, '') === '0%') && event.inputType === 'deleteContentForward') {
+                //     event.target.selectionStart = 1;
+                //     event.target.selectionEnd = 1;
+                // } else {
+                //     event.target.selectionStart = cursorStart;
+                //     event.target.selectionEnd = cursorEnd;
+                // }
+
+                if (event.target.value.length === 3) {
+                    event.target.selectionStart = 1;
+                    event.target.selectionEnd = 1;
+                } else if (cursorStart >= (event.target.value.length - 2)) {
+                    event.target.selectionStart = event.target.value.length - 2;
+                    event.target.selectionEnd = event.target.value.length - 2;
+                } else if (valueLengthStart > event.target.value.length) {
+                    if (cursorStart === 0) {
+                        event.target.selectionStart = cursorStart;
+                        event.target.selectionEnd = cursorEnd;
+                    } else if (event.target.value.length - cursorStart === 3) {
+                        event.target.selectionStart = cursorStart;
+                        event.target.selectionEnd = cursorEnd;
+                    } else {
+                        event.target.selectionStart = cursorStart - 1;
+                        event.target.selectionEnd = cursorEnd - 1;
+                    }
+                } else if (valueLengthStart < event.target.value.length) {
+                    if (cursorStart === event.target.value.length - 5 && event.inputType === "deleteContentForward") {
+                        event.target.selectionStart = cursorStart + 1;
+                        event.target.selectionEnd = cursorEnd + 1;
+                    } else if (cursorStart === event.target.value.length - 3 || cursorStart === event.target.value.length - 4 || cursorStart === event.target.value.length - 5) {
+                        event.target.selectionStart = cursorStart;
+                        event.target.selectionEnd = cursorEnd;
+                    } else if (event.inputType === "deleteContentBackward") {
+                        event.target.selectionStart = cursorStart;
+                        event.target.selectionEnd = cursorEnd;
+                    } else {
+                        event.target.selectionStart = cursorStart + 1;
+                        event.target.selectionEnd = cursorEnd + 1;
+                    }
+                } else if ( valueLengthStart === 5 && cursorStart === 0) {
+                    event.target.selectionStart = cursorStart + 1;
+                    event.target.selectionEnd = cursorEnd + 1;
+                } else {
+                    event.target.selectionStart = cursorStart;
+                    event.target.selectionEnd = cursorEnd;
+                }
+            } else if (event.target.className === 'term') {
+                event.target.value = Number(event.target.value.replace(/[^0-9]/g,''));
+
+                if (event.target.value >= 999) {
+                    event.target.value = 999;
+                }
+            }
+        }
+    };
+
+    listDeposits.calculateDeposit = function (event) {
+    
+        if (event.target.nodeName.toLowerCase() === 'input' || event.target.nodeName.toLowerCase() === 'select') {
+            tr = event.target.closest('tr');
+            td = event.target.closest('td');
+
+            deposit.base = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[2].querySelector('input').value);
+            deposit.replenishment = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[3].querySelector('input').value);
+            deposit.rate = converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[4].querySelector('input').value) / 100;
+            deposit.term = listDeposits.rows[tr.rowIndex].cells[5].querySelector('select').value === 'months' ? 
+                converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) :
+                converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) * 12;
+            deposit.rateType = listDeposits.rows[tr.rowIndex].cells[6].querySelector('select').value;
+
+            listDeposits.rows[tr.rowIndex].cells[7].querySelector('input').value = deposit.calculate().toLocaleString('ru', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    };
+
+    listDeposits.addDepositAfter = function (event) {
+        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnAddDepositAfter') ||
+            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnAddDepositAfter')) {
+            
+            let trCurrent = event.target;
+
+            while (trCurrent.nodeName.toLowerCase() !== 'tr') {
+                trCurrent = trCurrent.parentElement;
+            }
+
+            let depositNew = new Deposit();
+            trCurrent.after(depositNew.tr);
+
+        };
+    };
+
+    listDeposits.addDepositToTheEnd = function (event) {
+
+        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnAddDepositToTheEnd') ||
+            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnAddDepositToTheEnd')) {
+
+            let trLast = event.target;
+
+            while (trLast.nodeName.toLowerCase() !== 'tr') {
+                trLast = trLast.parentElement;
+            }
+
+            let depositNew = new Deposit();
+            trLast.before(depositNew.tr);
+
+        };
+    };
+
+    listDeposits.copyDeposit = function (event) {
+        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnCopyDeposit') ||
+            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnCopyDeposit')) {
+
+            let trCurrent = event.target;
+
+            while (trCurrent.nodeName.toLowerCase() !== 'tr') {
+                trCurrent = trCurrent.parentElement;
+            }
+
+            let trCurrentCopy = trCurrent.cloneNode(true);
+            trCurrent.after(trCurrentCopy);
+        };
+    }
+
+    listDeposits.deleteDeposit = function (event) {
+        if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnDeleteDeposit') ||
+            (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnDeleteDeposit')) {
+            
+            let trCurrent = event.target;
+
+            while (trCurrent.nodeName.toLowerCase() !== 'tr') {
+                trCurrent = trCurrent.parentElement;
+            }
+
+            if (listDeposits.rows.length > 3) {
+                trCurrent.remove();
+            }
+        };
+    }
+
+    listDeposits.addEventListener('input', listDeposits.formatInput);
+    listDeposits.addEventListener('change', listDeposits.formatInput);
+    listDeposits.addEventListener('change', listDeposits.calculateDeposit);
+    listDeposits.addEventListener('focusin', addListBanksToSelect);
+    listDeposits.addEventListener('click', listDeposits.addDepositAfter);
+    listDeposits.addEventListener('click', listDeposits.addDepositToTheEnd);
+    listDeposits.addEventListener('click', listDeposits.copyDeposit);
+    listDeposits.addEventListener('click', listDeposits.deleteDeposit);
+
+
+
+let sectionMain = document.querySelector('.main');
+function showScrollLeftOnMain (event) {
+    console.log('Main scroll left:', event.target.scrollLeft);
+    console.log('Main offset left:', event.target.offsetLeft);
+}
+
+sectionMain.addEventListener('scroll', showScrollLeftOnMain);
+
 
 
 

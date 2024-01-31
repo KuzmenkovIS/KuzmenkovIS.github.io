@@ -29,7 +29,8 @@ header {
     height: 64px;
     width: 100%;
 
-    background-color: var(--color-background-light);
+    /* background-color: var(--color-background-light); */
+    background-color: #f6f8fa;
 
     display: flex;
     justify-content: center;
