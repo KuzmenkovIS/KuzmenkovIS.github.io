@@ -17,7 +17,7 @@
     </header>
     <section class="main">
         <table class="deposits">
-            <tbody>
+            <thead>
                 <tr>
                     <th>Банк</th>
                     <th>Вклад</th>
@@ -29,23 +29,25 @@
                     <th>Итого</th>
                     <th></th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr>
                     <td>
                         <div class="selectWrapper">
-                            <select class="bank" name="bank" id="">
+                            <select class="bank" name="nameBank" id="">
                                 <option value="">Выберите банк</option>                        
                             </select>
                         </div>
                     </td>
-                    <td><input type="text" class="nameDeposit" maxlength="20" name="deposit" placeholder="Название вклада"></td>
-                    <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
-                    <td><input type="text" class="currency" maxlength="26" value="0,00 &#8381"></td>
-                    <td><input type="text" class="rate" maxlength="8" value="0,00 %"></td>
+                    <td><input type="text" class="nameDeposit" name="nameDeposit" maxlength="20" placeholder="Название вклада"></td>
+                    <td><input type="text" class="currency" name="sumBase" maxlength="26" value="0,00 &#8381"></td>
+                    <td><input type="text" class="currency" name="sumReplenishment" maxlength="26" value="0,00 &#8381"></td>
+                    <td><input type="text" class="rate" name="rate" maxlength="8" value="0,00 %"></td>
                     <td>
                         <div class="tdFlexContainer">
-                            <input type="number" class= "term" min="0" step="1" max="1200" value=0>
+                            <input type="number" class= "term" name="term" min="0" step="1" max="1200" value=0>
                             <div class="selectWrapper">
-                                <select name="" class="termUnitOfMeasure">
+                                <select name="termUnitOfMeasure" class="termUnitOfMeasure" name="termUnitOfMeasure">
                                     <option value="months">месяцы</option>
                                     <option value="years">годы</option>
                                 </select>
@@ -54,13 +56,13 @@
                     </td>
                     <td>
                         <div class="selectWrapper">
-                            <select name="" id="">
+                            <select name="rateType" id="">
                                 <option value="capitalizationPerMonth">Ежемесячная капитализация</option>
                                 <option value="percentInTheEnd">Проценты в конце срока</option>
                             </select>
                         </div>
                     </td >
-                    <td><input type="text" class= "currency" maxlength="26" value="0,00 &#8381" disabled></td>
+                    <td><input type="text" class= "currency" name="sumTotal" maxlength="26" value="0,00 &#8381" disabled></td>
                     <td>
                         <div class="tdFlexContainer">
                             <button class="btnAddDepositAfter" type="button">

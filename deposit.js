@@ -69,11 +69,21 @@ class Deposit {
 
                 this.tdNameBank_select = document.createElement('select');
                 this.tdNameBank_select.className = 'bank';
+                this.tdNameBank_select.name = 'nameBank';
 
                     this.tdNameBank_option = document.createElement('option');
                     this.tdNameBank_option.text = 'Выберите банк';
+                    this.tdNameBank_select.append(this.tdNameBank_option);
 
-            this.tdNameBank_select.append(this.tdNameBank_option);
+                    for (let i=0; i<listBanks.length; i++) {
+                        this['tdNameBank_option_'+i] = document.createElement('option');
+                        this['tdNameBank_option_'+i].text = listBanks[i].nameRus;
+                        this['tdNameBank_option_'+i].value = listBanks[i].nameEng;
+
+                        this.tdNameBank_select.append(this['tdNameBank_option_'+i]);
+                    }
+
+            
             this.tdNameBank_selectWrapper.append(this.tdNameBank_select);
             this.tdNameBank.append(this.tdNameBank_selectWrapper);
 
@@ -82,8 +92,8 @@ class Deposit {
             this.tdNameDeposit_input = document.createElement('input');
             this.tdNameDeposit_input.type = 'text';
             this.tdNameDeposit_input.className = 'nameDeposit';
+            this.tdNameDeposit_input.name = 'nameDeposit';
             this.tdNameDeposit_input.maxLength = 20;
-            this.tdNameDeposit_input.name = 'deposit';
             this.tdNameDeposit_input.placeholder = 'Название вклада';
 
             this.tdNameDeposit.append(this.tdNameDeposit_input);
@@ -93,6 +103,7 @@ class Deposit {
             this.tdBase_input = document.createElement('input');
             this.tdBase_input.type = 'text';
             this.tdBase_input.className = 'currency';
+            this.tdBase_input.name = 'sumBase';
             this.tdBase_input.maxLength = 26;
             this.tdBase_input.value = '0,00 \u20BD';
 
@@ -103,6 +114,7 @@ class Deposit {
             this.tdReplenishment_input = document.createElement('input');
             this.tdReplenishment_input.type = 'text';
             this.tdReplenishment_input.className = 'currency';
+            this.tdReplenishment_input.name = 'sumReplenishment';
             this.tdReplenishment_input.maxLength = 26;
             this.tdReplenishment_input.value = '0,00 \u20BD';
 
@@ -113,6 +125,7 @@ class Deposit {
             this.tdRate_input = document.createElement('input');
             this.tdRate_input.type = 'text';
             this.tdRate_input.className = 'rate';
+            this.tdRate_input.name = 'rate';
             this.tdRate_input.maxLength = 8;
             this.tdRate_input.value = '0,00 %';
 
@@ -126,6 +139,7 @@ class Deposit {
                 this.tdTerm_input = document.createElement('input');
                 this.tdTerm_input.type = 'number';
                 this.tdTerm_input.className = 'term';
+                this.tdTerm_input.name = 'term';
                 this.tdTerm_input.min = 0;
                 this.tdTerm_input.step = 1;
                 this.tdTerm_input.max = 1200;
@@ -136,6 +150,7 @@ class Deposit {
 
                     this.tdTerm_select = document.createElement('select');
                     this.tdTerm_select.className = 'termUnitOfMeasure';
+                    this.tdTerm_select.name = 'termUnitOfMeasure';
 
                         this.tdTerm_option_months = document.createElement('option');
                         this.tdTerm_option_months.value = 'months';
@@ -159,6 +174,7 @@ class Deposit {
             this.tdRateType_selectWrapper.className = 'selectWrapper';
 
                 this.tdRateType_select = document.createElement('select');
+                this.tdRateType_select.name = 'rateType';
                 
                     this.tdRateType_option_capitalizationPerMonth = document.createElement('option');
                     this.tdRateType_option_capitalizationPerMonth.value = 'capitalizationPerMonth';
@@ -178,6 +194,7 @@ class Deposit {
             this.tdTotal_input = document.createElement('input');
             this.tdTotal_input.type = 'text';
             this.tdTotal_input.className = 'currency';
+            this.tdTotal_input.name = 'sumTotal';
             this.tdTotal_input.maxLength = 26;
             this.tdTotal_input.value = '0,00 \u20BD';
             this.tdTotal_input.disabled = true;
@@ -496,6 +513,7 @@ let listDeposits = document.querySelector('table');
             let depositNew = new Deposit();
             trCurrent.after(depositNew.tr);
 
+            listDeposits.saveDeposits();
         };
     };
 
@@ -513,6 +531,7 @@ let listDeposits = document.querySelector('table');
             let depositNew = new Deposit();
             trLast.before(depositNew.tr);
 
+            listDeposits.saveDeposits();
         };
     };
 
@@ -527,7 +546,14 @@ let listDeposits = document.querySelector('table');
             }
 
             let trCurrentCopy = trCurrent.cloneNode(true);
+
+            trCurrentCopy.querySelector('[name=nameBank]').selectedIndex = trCurrent.querySelector('[name=nameBank]').selectedIndex;
+            trCurrentCopy.querySelector('[name=termUnitOfMeasure]').selectedIndex = trCurrent.querySelector('[name=termUnitOfMeasure]').selectedIndex;
+            trCurrentCopy.querySelector('[name=rateType]').selectedIndex = trCurrent.querySelector('[name=rateType]').selectedIndex;
+
             trCurrent.after(trCurrentCopy);
+
+            listDeposits.saveDeposits();
         };
     }
 
@@ -535,17 +561,80 @@ let listDeposits = document.querySelector('table');
         if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnDeleteDeposit') ||
             (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnDeleteDeposit')) {
             
-            let trCurrent = event.target;
-
-            while (trCurrent.nodeName.toLowerCase() !== 'tr') {
-                trCurrent = trCurrent.parentElement;
-            }
-
             if (listDeposits.rows.length > 3) {
+                let trCurrent = event.target;
+
+                while (trCurrent.nodeName.toLowerCase() !== 'tr') {
+                    trCurrent = trCurrent.parentElement;
+                }
+
                 trCurrent.remove();
+
+                listDeposits.saveDeposits();
             }
         };
     }
+// **************************************************** 
+    listDeposits.saveDeposits = function () {
+        localStorage.clear();
+
+        if (listDeposits.rows.length > 2) {
+            for (let i=1; i < (listDeposits.rows.length - 1); i++) {
+                
+                let key = 'tr'+i;
+                let dataRow = {
+                    nameBank: String(listDeposits.rows[i].querySelector('[name=nameBank]').selectedIndex),
+                    nameDeposit: String(listDeposits.rows[i].querySelector('[name=nameDeposit]').value),
+                    sumBase: String(listDeposits.rows[i].querySelector('[name=sumBase]').value),
+                    sumReplenishment: String(listDeposits.rows[i].querySelector('[name=sumReplenishment]').value),
+                    rate: String(listDeposits.rows[i].querySelector('[name=rate]').value),
+                    term: String(listDeposits.rows[i].querySelector('[name=term]').value),
+                    termUnitOfMeasure: String(listDeposits.rows[i].querySelector('[name=termUnitOfMeasure]').selectedIndex),
+                    rateType: String(listDeposits.rows[i].querySelector('[name=rateType]').selectedIndex),
+                    sumTotal: String(listDeposits.rows[i].querySelector('[name=sumTotal]').value),
+                };
+
+                localStorage[key]=JSON.stringify(dataRow);
+            }
+        }
+
+    }
+
+    listDeposits.loadDeposits = function () {
+        console.log('*** loadDeposits started...');
+        for (let i=1; i < listDeposits.rows.length - 1; i++) {
+            listDeposits.deleteRow(i);
+        }
+
+        for (let i=1; i <= localStorage.length; i++) {
+            console.log('tr'+i+':', JSON.parse(localStorage.getItem('tr'+i)));
+            rowStorage = JSON.parse(localStorage.getItem('tr'+i));
+
+            let rowCurrent = new Deposit();
+
+            console.log('*** rowCurrent.tr.nameBank.options', rowCurrent.tr);
+
+            rowCurrent.tr.querySelector('[name=nameBank]').selectedIndex = rowStorage.nameBank;
+            rowCurrent.tr.querySelector('[name=nameDeposit]').value = rowStorage.nameDeposit;
+            rowCurrent.tr.querySelector('[name=sumBase]').value = rowStorage.sumBase;
+            rowCurrent.tr.querySelector('[name=sumReplenishment]').value = rowStorage.sumReplenishment;
+            rowCurrent.tr.querySelector('[name=rate]').value = rowStorage.rate;
+            rowCurrent.tr.querySelector('[name=term]').value = rowStorage.term;
+            rowCurrent.tr.querySelector('[name=termUnitOfMeasure]').selectedIndex = rowStorage.termUnitOfMeasure;
+            rowCurrent.tr.querySelector('[name=rateType]').selectedIndex = rowStorage.rateType;
+            rowCurrent.tr.querySelector('[name=sumTotal]').value = rowStorage.sumTotal;
+
+            let rowLast = listDeposits.rows.item(listDeposits.rows.length-1);
+
+            rowLast.before(rowCurrent.tr);
+        }
+    }
+// **************************************************** 
+    console.log('*** listDeposits.rows', listDeposits.rows);
+    console.log('*** listDeposits.rows[1]', listDeposits.rows[1]);
+    console.log('*** listDeposits.rows[1].nameBank', listDeposits.rows[1].querySelector('[name=nameBank]'));
+    console.log('*** listDeposits.rows[1].nameDeposit', listDeposits.rows[1].querySelector('[name=nameDeposit]').value);
+// ****************************************************
 
     listDeposits.addEventListener('input', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.formatInput);
@@ -555,6 +644,22 @@ let listDeposits = document.querySelector('table');
     listDeposits.addEventListener('click', listDeposits.addDepositToTheEnd);
     listDeposits.addEventListener('click', listDeposits.copyDeposit);
     listDeposits.addEventListener('click', listDeposits.deleteDeposit);
+// ****************************************************
+    window.addEventListener('load', listDeposits.loadDeposits);
+    listDeposits.addEventListener('change', (event) => {
+        console.log('--- EVENT:', event);
+        console.log('--- Event.target.nodeName:', event.target.nodeName );
+        console.log('--- Event.type:', event.type );
+        if (event.target.nodeName === "SELECT" && event.type === "change") {
+            console.log('!!! listDeposits.rows[1].nameBank', listDeposits.rows[1].querySelector('[name=nameBank]'));
+        } else if (event.target.nodeName === "INPUT" && event.type === "change") {
+            console.log('*** listDeposits.rows[1].nameDeposit', listDeposits.rows[1].querySelector('[name=nameDeposit]').value);
+        }
+
+        listDeposits.saveDeposits();
+
+        console.log('localStorage:', localStorage);
+    })
 
 
 
