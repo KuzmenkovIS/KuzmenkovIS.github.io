@@ -601,18 +601,16 @@ let listDeposits = document.querySelector('table');
     }
 
     listDeposits.loadDeposits = function () {
-        console.log('*** loadDeposits started...');
+
         for (let i=1; i < listDeposits.rows.length - 1; i++) {
             listDeposits.deleteRow(i);
         }
 
         for (let i=1; i <= localStorage.length; i++) {
-            console.log('tr'+i+':', JSON.parse(localStorage.getItem('tr'+i)));
+
             rowStorage = JSON.parse(localStorage.getItem('tr'+i));
 
             let rowCurrent = new Deposit();
-
-            console.log('*** rowCurrent.tr.nameBank.options', rowCurrent.tr);
 
             rowCurrent.tr.querySelector('[name=nameBank]').selectedIndex = rowStorage.nameBank;
             rowCurrent.tr.querySelector('[name=nameDeposit]').value = rowStorage.nameDeposit;
@@ -629,16 +627,11 @@ let listDeposits = document.querySelector('table');
             rowLast.before(rowCurrent.tr);
         }
     }
-// **************************************************** 
-    console.log('*** listDeposits.rows', listDeposits.rows);
-    console.log('*** listDeposits.rows[1]', listDeposits.rows[1]);
-    console.log('*** listDeposits.rows[1].nameBank', listDeposits.rows[1].querySelector('[name=nameBank]'));
-    console.log('*** listDeposits.rows[1].nameDeposit', listDeposits.rows[1].querySelector('[name=nameDeposit]').value);
-// ****************************************************
 
     listDeposits.addEventListener('input', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.calculateDeposit);
+    listDeposits.addEventListener('change', listDeposits.saveDeposits);
     listDeposits.addEventListener('focusin', addListBanksToSelect);
     listDeposits.addEventListener('click', listDeposits.addDepositAfter);
     listDeposits.addEventListener('click', listDeposits.addDepositToTheEnd);
@@ -646,21 +639,6 @@ let listDeposits = document.querySelector('table');
     listDeposits.addEventListener('click', listDeposits.deleteDeposit);
 // ****************************************************
     window.addEventListener('load', listDeposits.loadDeposits);
-    listDeposits.addEventListener('change', (event) => {
-        console.log('--- EVENT:', event);
-        console.log('--- Event.target.nodeName:', event.target.nodeName );
-        console.log('--- Event.type:', event.type );
-        if (event.target.nodeName === "SELECT" && event.type === "change") {
-            console.log('!!! listDeposits.rows[1].nameBank', listDeposits.rows[1].querySelector('[name=nameBank]'));
-        } else if (event.target.nodeName === "INPUT" && event.type === "change") {
-            console.log('*** listDeposits.rows[1].nameDeposit', listDeposits.rows[1].querySelector('[name=nameDeposit]').value);
-        }
-
-        listDeposits.saveDeposits();
-
-        console.log('localStorage:', localStorage);
-    })
-
 
 
 let sectionMain = document.querySelector('.main');
