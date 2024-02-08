@@ -6,11 +6,16 @@
     --color-background-hover: #F7F7F7;
     --color-background-active: #B3DBFF;
     --color-background-disabled: #F7F7F7;
+    --color-background-alt: #f6f8fa;
     --color-border: #EBEBEB;
     --color-outline: #6BA2FF;
     --color-1: #F6FAF5;
     --color-2: #FAF8F5;
     --color-3: #FAF5F9;
+
+    --tooltips-color-text: #783429;
+    --tooltips-color-background: #F7F6EE;
+    --tooltips-color-border: #676663;
 
 }
 
@@ -30,7 +35,7 @@ header {
     width: 100%;
 
     /* background-color: var(--color-background-light); */
-    background-color: #f6f8fa;
+    background-color: var(--color-background-alt);
 
     display: flex;
     justify-content: center;
@@ -315,9 +320,44 @@ header {
             background-color: var(--color-background-active);
         }
 
+            .deposits button[data-description] {
+                position: relative;
+                cursor: pointer;
+            }
+
+            .deposits button[data-description]:hover::after{
+                content: attr(data-description);
+
+                position: absolute;
+                top: 1px;
+                right: 28px;
+                z-index: 10;
+
+                height: 13px;
+                min-width: 150px;
+                margin: 0;
+                padding: 4px;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                color: var(--tooltips-color-text);
+                background-color: var(--tooltips-color-background);
+
+                border: 1px solid var(--tooltips-color-border);
+                border-radius: 4px;
+
+                font-family: 'Open Sans', sans-serif;
+                font-size: 12px;
+                font-weight: 400;
+
+                cursor: pointer;
+            }
+
 footer {
     height: 44px;
     width: 100%;
 
-    background-color: #f6f8fa;
+    background-color: var(--color-background-alt);
 }

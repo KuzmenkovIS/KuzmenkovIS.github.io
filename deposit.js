@@ -209,6 +209,7 @@ class Deposit {
                 this.tdControl_button_add = document.createElement('button');
                 this.tdControl_button_add.type = 'button';
                 this.tdControl_button_add.className = 'btnAddDepositAfter';
+                this.tdControl_button_add.dataset.description = 'Добавить новый депозит';
 
                     this.tdControl_img_add = document.createElement('img');
                     this.tdControl_img_add.src = "images/plus-solid.svg";
@@ -219,6 +220,7 @@ class Deposit {
                 this.tdControl_button_copy = document.createElement('button');
                 this.tdControl_button_copy.type = 'button';
                 this.tdControl_button_copy.className = 'btnCopyDeposit';
+                this.tdControl_button_copy.dataset.description = 'Скопировать депозит';
 
                     this.tdControl_img_copy = document.createElement('img');
                     this.tdControl_img_copy.src = 'images/copy-solid.svg';
@@ -228,6 +230,7 @@ class Deposit {
                 this.tdControl_button_delete = document.createElement('button');
                 this.tdControl_button_delete.type = 'button';
                 this.tdControl_button_delete.className = 'btnDeleteDeposit';
+                this.tdControl_button_delete.dataset.description = 'Удалить депозит';
 
                     this.tdControl_img_delete = document.createElement('img');
                     this.tdControl_img_delete.src = 'images/xmark-solid.svg';
