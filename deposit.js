@@ -40,224 +40,6 @@ let deposit = {
     }
 }
 
-function addListBanksToSelect (event) {
-    if (event.type === 'focusin' && event.target.nodeName.toLowerCase() === 'select' && event.target.className === 'bank') {
-
-        if (event.target.length > 1) {
-            event.target.length = 1;
-        }
-
-        for (let bank of listBanks) {
-            let option = document.createElement('option');
-            option.value = bank.nameEng;
-            option.text = bank.nameRus;
-
-            event.target.add(option);
-        }
-    }
-}
-
-
-class Deposit {
-    constructor () {
-        this.tr = document.createElement('tr');
-
-        this.tdNameBank = document.createElement('td');
-
-            this.tdNameBank_selectWrapper = document.createElement('div');
-            this.tdNameBank_selectWrapper.className = 'selectWrapper';
-
-                this.tdNameBank_select = document.createElement('select');
-                this.tdNameBank_select.className = 'bank';
-                this.tdNameBank_select.name = 'nameBank';
-
-                    this.tdNameBank_option = document.createElement('option');
-                    this.tdNameBank_option.text = 'Выберите банк';
-                    this.tdNameBank_select.append(this.tdNameBank_option);
-
-                    for (let i=0; i<listBanks.length; i++) {
-                        this['tdNameBank_option_'+i] = document.createElement('option');
-                        this['tdNameBank_option_'+i].text = listBanks[i].nameRus;
-                        this['tdNameBank_option_'+i].value = listBanks[i].nameEng;
-
-                        this.tdNameBank_select.append(this['tdNameBank_option_'+i]);
-                    }
-
-            
-            this.tdNameBank_selectWrapper.append(this.tdNameBank_select);
-            this.tdNameBank.append(this.tdNameBank_selectWrapper);
-
-        this.tdNameDeposit = document.createElement('td');
-
-            this.tdNameDeposit_input = document.createElement('input');
-            this.tdNameDeposit_input.type = 'text';
-            this.tdNameDeposit_input.className = 'nameDeposit';
-            this.tdNameDeposit_input.name = 'nameDeposit';
-            this.tdNameDeposit_input.maxLength = 20;
-            this.tdNameDeposit_input.placeholder = 'Название вклада';
-
-            this.tdNameDeposit.append(this.tdNameDeposit_input);
-
-        this.tdBase = document.createElement('td');
-
-            this.tdBase_input = document.createElement('input');
-            this.tdBase_input.type = 'text';
-            this.tdBase_input.className = 'currency';
-            this.tdBase_input.name = 'sumBase';
-            this.tdBase_input.maxLength = 26;
-            this.tdBase_input.value = '0,00 \u20BD';
-
-            this.tdBase.append(this.tdBase_input);
-
-        this.tdReplenishment = document.createElement('td');
-
-            this.tdReplenishment_input = document.createElement('input');
-            this.tdReplenishment_input.type = 'text';
-            this.tdReplenishment_input.className = 'currency';
-            this.tdReplenishment_input.name = 'sumReplenishment';
-            this.tdReplenishment_input.maxLength = 26;
-            this.tdReplenishment_input.value = '0,00 \u20BD';
-
-            this.tdReplenishment.append(this.tdReplenishment_input);
-
-        this.tdRate = document.createElement('td');
-
-            this.tdRate_input = document.createElement('input');
-            this.tdRate_input.type = 'text';
-            this.tdRate_input.className = 'rate';
-            this.tdRate_input.name = 'rate';
-            this.tdRate_input.maxLength = 8;
-            this.tdRate_input.value = '0,00 %';
-
-            this.tdRate.append(this.tdRate_input);
-
-        this.tdTerm = document.createElement('td');
-
-            this.tdTerm_flexContainer = document.createElement('div');
-            this.tdTerm_flexContainer.className = 'tdFlexContainer';
-
-                this.tdTerm_input = document.createElement('input');
-                this.tdTerm_input.type = 'number';
-                this.tdTerm_input.className = 'term';
-                this.tdTerm_input.name = 'term';
-                this.tdTerm_input.min = 0;
-                this.tdTerm_input.step = 1;
-                this.tdTerm_input.max = 1200;
-                this.tdTerm_input.value = 0;
-
-                this.tdTerm_selectWrapper = document.createElement('div');
-                this.tdTerm_selectWrapper.className = 'selectWrapper';
-
-                    this.tdTerm_select = document.createElement('select');
-                    this.tdTerm_select.className = 'termUnitOfMeasure';
-                    this.tdTerm_select.name = 'termUnitOfMeasure';
-
-                        this.tdTerm_option_months = document.createElement('option');
-                        this.tdTerm_option_months.value = 'months';
-                        this.tdTerm_option_months.text = 'месяцы';
-
-                        this.tdTerm_option_years = document.createElement('option');
-                        this.tdTerm_option_years.value = 'years';
-                        this.tdTerm_option_years.text = 'годы';
-
-            this.tdTerm_select.append(this.tdTerm_option_months);
-            this.tdTerm_select.append(this.tdTerm_option_years);
-            this.tdTerm_selectWrapper.append(this.tdTerm_select);
-            this.tdTerm_flexContainer.append(this.tdTerm_input);
-            this.tdTerm_flexContainer.append(this.tdTerm_selectWrapper);
-            this.tdTerm.append(this.tdTerm_flexContainer);
-
-
-        this.tdRateType = document.createElement('td');
-
-            this.tdRateType_selectWrapper = document.createElement('div');
-            this.tdRateType_selectWrapper.className = 'selectWrapper';
-
-                this.tdRateType_select = document.createElement('select');
-                this.tdRateType_select.name = 'rateType';
-                
-                    this.tdRateType_option_capitalizationPerMonth = document.createElement('option');
-                    this.tdRateType_option_capitalizationPerMonth.value = 'capitalizationPerMonth';
-                    this.tdRateType_option_capitalizationPerMonth.text = 'Ежемесячная капитализация';
-
-                    this.tdRateType_option_percentInTheEnd = document.createElement('option');
-                    this.tdRateType_option_percentInTheEnd.value = 'percentInTheEnd';
-                    this.tdRateType_option_percentInTheEnd.text = 'Проценты в конце срока';
-
-            this.tdRateType_select.append(this.tdRateType_option_capitalizationPerMonth);
-            this.tdRateType_select.append(this.tdRateType_option_percentInTheEnd);
-            this.tdRateType_selectWrapper.append(this.tdRateType_select);
-            this.tdRateType.append(this.tdRateType_selectWrapper);
-
-        this.tdTotal = document.createElement('td');
-
-            this.tdTotal_input = document.createElement('input');
-            this.tdTotal_input.type = 'text';
-            this.tdTotal_input.className = 'currency';
-            this.tdTotal_input.name = 'sumTotal';
-            this.tdTotal_input.maxLength = 26;
-            this.tdTotal_input.value = '0,00 \u20BD';
-            this.tdTotal_input.disabled = true;
-
-            this.tdTotal.append(this.tdTotal_input);
-
-        this.tdControl = document.createElement('td');
-
-            this.tdControl_flexContainer = document.createElement('div');
-            this.tdControl_flexContainer.className = 'tdFlexContainer';
-
-                this.tdControl_button_add = document.createElement('button');
-                this.tdControl_button_add.type = 'button';
-                this.tdControl_button_add.className = 'btnAddDepositAfter';
-                this.tdControl_button_add.dataset.description = 'Добавить новый вклад';
-
-                    this.tdControl_img_add = document.createElement('img');
-                    this.tdControl_img_add.src = "images/plus-solid.svg";
-                    this.tdControl_img_add.height = 20;
-                    this.tdControl_img_add.width = 20;
-
-
-                this.tdControl_button_copy = document.createElement('button');
-                this.tdControl_button_copy.type = 'button';
-                this.tdControl_button_copy.className = 'btnCopyDeposit';
-                this.tdControl_button_copy.dataset.description = 'Скопировать вклад';
-
-                    this.tdControl_img_copy = document.createElement('img');
-                    this.tdControl_img_copy.src = 'images/copy-solid.svg';
-                    this.tdControl_img_copy.height = 16;
-                    this.tdControl_img_copy.width = 16;
-                
-                this.tdControl_button_delete = document.createElement('button');
-                this.tdControl_button_delete.type = 'button';
-                this.tdControl_button_delete.className = 'btnDeleteDeposit';
-                this.tdControl_button_delete.dataset.description = 'Удалить вклад';
-
-                    this.tdControl_img_delete = document.createElement('img');
-                    this.tdControl_img_delete.src = 'images/xmark-solid.svg';
-                    this.tdControl_img_delete.height = 24;
-                    this.tdControl_img_delete.width = 24;
-
-            this.tdControl_button_add.append(this.tdControl_img_add);
-            this.tdControl_button_copy.append(this.tdControl_img_copy);
-            this.tdControl_button_delete.append(this.tdControl_img_delete);
-            this.tdControl_flexContainer.append(this.tdControl_button_add);
-            this.tdControl_flexContainer.append(this.tdControl_button_copy);
-            this.tdControl_flexContainer.append(this.tdControl_button_delete);
-            this.tdControl.append(this.tdControl_flexContainer);
-
-        this.tr.append(this.tdNameBank);
-        this.tr.append(this.tdNameDeposit);
-        this.tr.append(this.tdBase);
-        this.tr.append(this.tdReplenishment);
-        this.tr.append(this.tdRate);
-        this.tr.append(this.tdTerm);
-        this.tr.append(this.tdRateType);
-        this.tr.append(this.tdTotal);
-        this.tr.append(this.tdControl);
-
-    }
-}
-
 class Converter {
     constructor () {
 
@@ -480,6 +262,23 @@ let listDeposits = document.querySelector('table');
         }
     };
 
+    listDeposits.addListBanksToSelect = function (event) {
+        if (event.type === 'focusin' && event.target.nodeName.toLowerCase() === 'select' && event.target.className === 'bank') {
+    
+            if (event.target.length > 1) {
+                event.target.length = 1;
+            }
+    
+            for (let bank of listBanks) {
+                let option = document.createElement('option');
+                option.value = bank.nameEng;
+                option.text = bank.nameRus;
+    
+                event.target.add(option);
+            }
+        }
+    }
+
     listDeposits.calculateDeposit = function (event) {
     
         if (event.target.nodeName.toLowerCase() === 'input' || event.target.nodeName.toLowerCase() === 'select') {
@@ -503,6 +302,205 @@ let listDeposits = document.querySelector('table');
         }
     };
 
+    listDeposits.createDeposit = function (event) {
+        let tr = document.createElement('tr');
+
+        let tdNameBank = document.createElement('td');
+
+            let tdNameBank_selectWrapper = document.createElement('div');
+                tdNameBank_selectWrapper.className = 'selectWrapper';
+
+                let tdNameBank_select = document.createElement('select');
+                    tdNameBank_select.className = 'bank';
+                    tdNameBank_select.name = 'nameBank';
+
+                    let tdNameBank_option = document.createElement('option');
+                        tdNameBank_option.text = 'Выберите банк';
+                        tdNameBank_select.append(tdNameBank_option);
+
+                        for (let i=0; i<listBanks.length; i++) {
+                            let tdNameBank_option= document.createElement('option');
+                            tdNameBank_option.text = listBanks[i].nameRus;
+                            tdNameBank_option.value = listBanks[i].nameEng;
+
+                            tdNameBank_select.append(tdNameBank_option);
+                        }
+
+            
+            tdNameBank_selectWrapper.append(tdNameBank_select);
+            tdNameBank.append(tdNameBank_selectWrapper);
+
+        let tdNameDeposit = document.createElement('td');
+
+            let tdNameDeposit_input = document.createElement('input');
+                tdNameDeposit_input.type = 'text';
+                tdNameDeposit_input.className = 'nameDeposit';
+                tdNameDeposit_input.name = 'nameDeposit';
+                tdNameDeposit_input.maxLength = 20;
+                tdNameDeposit_input.placeholder = 'Название вклада';
+
+            tdNameDeposit.append(tdNameDeposit_input);
+
+        let tdBase = document.createElement('td');
+
+            let tdBase_input = document.createElement('input');
+                tdBase_input.type = 'text';
+                tdBase_input.className = 'currency';
+                tdBase_input.name = 'sumBase';
+                tdBase_input.maxLength = 26;
+                tdBase_input.value = '0,00 \u20BD';
+
+            tdBase.append(tdBase_input);
+
+        let tdReplenishment = document.createElement('td');
+
+            let tdReplenishment_input = document.createElement('input');
+                tdReplenishment_input.type = 'text';
+                tdReplenishment_input.className = 'currency';
+                tdReplenishment_input.name = 'sumReplenishment';
+                tdReplenishment_input.maxLength = 26;
+                tdReplenishment_input.value = '0,00 \u20BD';
+
+            tdReplenishment.append(tdReplenishment_input);
+
+        let tdRate = document.createElement('td');
+
+            let tdRate_input = document.createElement('input');
+                tdRate_input.type = 'text';
+                tdRate_input.className = 'rate';
+                tdRate_input.name = 'rate';
+                tdRate_input.maxLength = 8;
+                tdRate_input.value = '0,00 %';
+
+            tdRate.append(tdRate_input);
+
+        let tdTerm = document.createElement('td');
+
+            let tdTerm_flexContainer = document.createElement('div');
+                tdTerm_flexContainer.className = 'tdFlexContainer';
+
+                let tdTerm_input = document.createElement('input');
+                    tdTerm_input.type = 'number';
+                    tdTerm_input.className = 'term';
+                    tdTerm_input.name = 'term';
+                    tdTerm_input.min = 0;
+                    tdTerm_input.step = 1;
+                    tdTerm_input.max = 1200;
+                    tdTerm_input.value = 0;
+
+                let tdTerm_selectWrapper = document.createElement('div');
+                    tdTerm_selectWrapper.className = 'selectWrapper';
+
+                    let tdTerm_select = document.createElement('select');
+                        tdTerm_select.className = 'termUnitOfMeasure';
+                        tdTerm_select.name = 'termUnitOfMeasure';
+
+                        let tdTerm_option_months = document.createElement('option');
+                            tdTerm_option_months.value = 'months';
+                            tdTerm_option_months.text = 'месяцы';
+
+                        let tdTerm_option_years = document.createElement('option');
+                            tdTerm_option_years.value = 'years';
+                            tdTerm_option_years.text = 'годы';
+
+            tdTerm_select.append(tdTerm_option_months);
+            tdTerm_select.append(tdTerm_option_years);
+            tdTerm_selectWrapper.append(tdTerm_select);
+            tdTerm_flexContainer.append(tdTerm_input);
+            tdTerm_flexContainer.append(tdTerm_selectWrapper);
+            tdTerm.append(tdTerm_flexContainer);
+
+
+        let tdRateType = document.createElement('td');
+
+            let tdRateType_selectWrapper = document.createElement('div');
+                tdRateType_selectWrapper.className = 'selectWrapper';
+
+                let tdRateType_select = document.createElement('select');
+                    tdRateType_select.name = 'rateType';
+                
+                    let tdRateType_option_capitalizationPerMonth = document.createElement('option');
+                        tdRateType_option_capitalizationPerMonth.value = 'capitalizationPerMonth';
+                        tdRateType_option_capitalizationPerMonth.text = 'Ежемесячная капитализация';
+
+                    let tdRateType_option_percentInTheEnd = document.createElement('option');
+                        tdRateType_option_percentInTheEnd.value = 'percentInTheEnd';
+                        tdRateType_option_percentInTheEnd.text = 'Проценты в конце срока';
+
+            tdRateType_select.append(tdRateType_option_capitalizationPerMonth);
+            tdRateType_select.append(tdRateType_option_percentInTheEnd);
+            tdRateType_selectWrapper.append(tdRateType_select);
+            tdRateType.append(tdRateType_selectWrapper);
+
+        let tdTotal = document.createElement('td');
+
+            let tdTotal_input = document.createElement('input');
+                tdTotal_input.type = 'text';
+                tdTotal_input.className = 'currency';
+                tdTotal_input.name = 'sumTotal';
+                tdTotal_input.maxLength = 26;
+                tdTotal_input.value = '0,00 \u20BD';
+                tdTotal_input.disabled = true;
+
+            tdTotal.append(tdTotal_input);
+
+        let tdControl = document.createElement('td');
+
+            let tdControl_flexContainer = document.createElement('div');
+                tdControl_flexContainer.className = 'tdFlexContainer';
+
+                let tdControl_button_add = document.createElement('button');
+                    tdControl_button_add.type = 'button';
+                    tdControl_button_add.className = 'btnAddDepositAfter';
+                    tdControl_button_add.dataset.description = 'Добавить новый вклад';
+
+                let tdControl_img_add = document.createElement('img');
+                    tdControl_img_add.src = "images/plus-solid.svg";
+                    tdControl_img_add.height = 20;
+                    tdControl_img_add.width = 20;
+
+
+                let tdControl_button_copy = document.createElement('button');
+                    tdControl_button_copy.type = 'button';
+                    tdControl_button_copy.className = 'btnCopyDeposit';
+                    tdControl_button_copy.dataset.description = 'Скопировать вклад';
+
+                    let tdControl_img_copy = document.createElement('img');
+                        tdControl_img_copy.src = 'images/copy-solid.svg';
+                        tdControl_img_copy.height = 16;
+                        tdControl_img_copy.width = 16;
+                
+                let tdControl_button_delete = document.createElement('button');
+                    tdControl_button_delete.type = 'button';
+                    tdControl_button_delete.className = 'btnDeleteDeposit';
+                    tdControl_button_delete.dataset.description = 'Удалить вклад';
+
+                    let tdControl_img_delete = document.createElement('img');
+                        tdControl_img_delete.src = 'images/xmark-solid.svg';
+                        tdControl_img_delete.height = 24;
+                        tdControl_img_delete.width = 24;
+
+            tdControl_button_add.append(tdControl_img_add);
+            tdControl_button_copy.append(tdControl_img_copy);
+            tdControl_button_delete.append(tdControl_img_delete);
+            tdControl_flexContainer.append(tdControl_button_add);
+            tdControl_flexContainer.append(tdControl_button_copy);
+            tdControl_flexContainer.append(tdControl_button_delete);
+            tdControl.append(tdControl_flexContainer);
+
+        tr.append(tdNameBank);
+        tr.append(tdNameDeposit);
+        tr.append(tdBase);
+        tr.append(tdReplenishment);
+        tr.append(tdRate);
+        tr.append(tdTerm);
+        tr.append(tdRateType);
+        tr.append(tdTotal);
+        tr.append(tdControl);
+
+        return tr;
+    }
+
     listDeposits.addDepositAfter = function (event) {
         if ((event.target.nodeName.toLowerCase() === 'button' && event.target.className === 'btnAddDepositAfter') ||
             (event.target.parentElement.nodeName.toLowerCase() === 'button' && event.target.parentElement.className === 'btnAddDepositAfter')) {
@@ -513,8 +511,8 @@ let listDeposits = document.querySelector('table');
                 trCurrent = trCurrent.parentElement;
             }
 
-            let depositNew = new Deposit();
-            trCurrent.after(depositNew.tr);
+            let depositNew = listDeposits.createDeposit();
+            trCurrent.after(depositNew);
 
             listDeposits.saveDeposits();
         };
@@ -531,8 +529,8 @@ let listDeposits = document.querySelector('table');
                 trLast = trLast.parentElement;
             }
 
-            let depositNew = new Deposit();
-            trLast.before(depositNew.tr);
+            let depositNew = listDeposits.createDeposit();
+            trLast.before(depositNew);
 
             listDeposits.saveDeposits();
         };
@@ -613,21 +611,21 @@ let listDeposits = document.querySelector('table');
 
             rowStorage = JSON.parse(localStorage.getItem('tr'+i));
 
-            let rowCurrent = new Deposit();
+            let rowCurrent = listDeposits.createDeposit();
 
-            rowCurrent.tr.querySelector('[name=nameBank]').selectedIndex = rowStorage.nameBank;
-            rowCurrent.tr.querySelector('[name=nameDeposit]').value = rowStorage.nameDeposit;
-            rowCurrent.tr.querySelector('[name=sumBase]').value = rowStorage.sumBase;
-            rowCurrent.tr.querySelector('[name=sumReplenishment]').value = rowStorage.sumReplenishment;
-            rowCurrent.tr.querySelector('[name=rate]').value = rowStorage.rate;
-            rowCurrent.tr.querySelector('[name=term]').value = rowStorage.term;
-            rowCurrent.tr.querySelector('[name=termUnitOfMeasure]').selectedIndex = rowStorage.termUnitOfMeasure;
-            rowCurrent.tr.querySelector('[name=rateType]').selectedIndex = rowStorage.rateType;
-            rowCurrent.tr.querySelector('[name=sumTotal]').value = rowStorage.sumTotal;
+            rowCurrent.querySelector('[name=nameBank]').selectedIndex = rowStorage.nameBank;
+            rowCurrent.querySelector('[name=nameDeposit]').value = rowStorage.nameDeposit;
+            rowCurrent.querySelector('[name=sumBase]').value = rowStorage.sumBase;
+            rowCurrent.querySelector('[name=sumReplenishment]').value = rowStorage.sumReplenishment;
+            rowCurrent.querySelector('[name=rate]').value = rowStorage.rate;
+            rowCurrent.querySelector('[name=term]').value = rowStorage.term;
+            rowCurrent.querySelector('[name=termUnitOfMeasure]').selectedIndex = rowStorage.termUnitOfMeasure;
+            rowCurrent.querySelector('[name=rateType]').selectedIndex = rowStorage.rateType;
+            rowCurrent.querySelector('[name=sumTotal]').value = rowStorage.sumTotal;
 
             let rowLast = listDeposits.rows.item(listDeposits.rows.length-1);
 
-            rowLast.before(rowCurrent.tr);
+            rowLast.before(rowCurrent);
         }
     }
 
@@ -635,7 +633,7 @@ let listDeposits = document.querySelector('table');
     listDeposits.addEventListener('change', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.calculateDeposit);
     listDeposits.addEventListener('change', listDeposits.saveDeposits);
-    listDeposits.addEventListener('focusin', addListBanksToSelect);
+    listDeposits.addEventListener('focusin', listDeposits.addListBanksToSelect);
     listDeposits.addEventListener('click', listDeposits.addDepositAfter);
     listDeposits.addEventListener('click', listDeposits.addDepositToTheEnd);
     listDeposits.addEventListener('click', listDeposits.copyDeposit);
