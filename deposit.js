@@ -10,36 +10,6 @@ let listBanks = [
      nameEng: 'Tinkoff'}
 ]
 
-let deposit = {
-
-    base: 0,
-    replenishment: 0,
-    rate: 0,
-    rateType: '',
-    term: 0,
-
-    calculate: function () {
-        let result = 0;
-
-        if (this.term === 0) {
-            console.log('Задайте срок вклада больше 0');
-            return this.base;
-        } else if (this.rateType === 'capitalizationPerMonth') {
-            for (let i = 1; i <= this.term; i++) {
-                if (i === 1) {
-                    result = this.base + this.replenishment + ((this.base * this.rate) / 12);
-                } else {
-                    result = result + this.replenishment + ((result * this.rate) / 12);
-                }
-            }
-        } else if (this.rateType === 'percentInTheEnd') {
-            result = this.base + (((this.base * this.rate) / 12) * (this.term));
-        }
-        
-        return result;
-    }
-}
-
 class Converter {
     constructor () {
 
@@ -97,6 +67,7 @@ class Converter {
     }
 
     stringToNumberPercentFractionDigits2 (value) {
+        console.log('stringToNumberPercentFractionDigits2... started');
 
         let valueNumbersAndDots = '';
         let indexDotLast = '';
@@ -109,6 +80,7 @@ class Converter {
             indexDotLast = valueNumbersAndDots.lastIndexOf('.');
 
             if ((!event && indexDotLast !== -1) || (event && indexDotLast !== -1)) {
+                console.log('stringToNumberPercentFractionDigits2... 1st IF');
                 valueBeforeDot = valueNumbersAndDots.slice(0,indexDotLast).replace(/\./g, '');
                 valueAfterDot = valueNumbersAndDots.slice(indexDotLast, indexDotLast + 3);
                 valueConverted = valueBeforeDot + valueAfterDot;
@@ -133,6 +105,39 @@ class Converter {
         return Number(valueConverted/100);
     }
 }
+
+class Deposit {
+    constructor (base, replenishment, rate, rateType, term) {
+        this.base = base;
+        this.replenishment = replenishment;
+        this.rate = rate;
+        this.rateType = rateType;
+        this.term = term;
+    }
+
+    calculate () {
+        let result = 0;
+
+        if (this.term <= 0) {
+            console.log('Задайте срок вклада больше 0');
+            return this.base;
+        } else if (this.rateType === 'capitalizationPerMonth') {
+            for (let i = 1; i <= this.term; i++) {
+                if (i === 1) {
+                    result = this.base + this.replenishment + ((this.base * this.rate) / 12);
+                } else {
+                    result = result + this.replenishment + ((result * this.rate) / 12);
+                }
+            }
+        } else if (this.rateType === 'percentInTheEnd') {
+            result = this.base + (((this.base * this.rate) / 12) * (this.term));
+        }
+        
+        return result; 
+    }
+}
+
+let deposit = new Deposit(0,0,0,0,0);
 
 let converter = new Converter();
 
@@ -202,7 +207,7 @@ let listDeposits = document.querySelector('table');
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
-                // Закоментированный код ниже для случая процентов без долей "100 %". Он может еще пригодиться, поэтому пока сохряняю
+                // Закоментированный код ниже для случая процентов без долей "100 %". Он может еще пригодиться, поэтому пока сохраняю
                 // if (cursorStart >= (event.target.value.length - 2)) {
                 //     event.target.selectionStart = event.target.value.length - 2;
                 //     event.target.selectionEnd = event.target.value.length - 2;
@@ -575,7 +580,7 @@ let listDeposits = document.querySelector('table');
             }
         };
     }
-// **************************************************** 
+
     listDeposits.saveDeposits = function () {
         localStorage.clear();
 
@@ -638,7 +643,7 @@ let listDeposits = document.querySelector('table');
     listDeposits.addEventListener('click', listDeposits.addDepositToTheEnd);
     listDeposits.addEventListener('click', listDeposits.copyDeposit);
     listDeposits.addEventListener('click', listDeposits.deleteDeposit);
-// ****************************************************
+
     window.addEventListener('load', listDeposits.loadDeposits);
 
 
