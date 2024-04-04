@@ -67,7 +67,6 @@ class Converter {
     }
 
     stringToNumberPercentFractionDigits2 (value) {
-        console.log('stringToNumberPercentFractionDigits2... started');
 
         let valueNumbersAndDots = '';
         let indexDotLast = '';
@@ -80,7 +79,6 @@ class Converter {
             indexDotLast = valueNumbersAndDots.lastIndexOf('.');
 
             if ((!event && indexDotLast !== -1) || (event && indexDotLast !== -1)) {
-                console.log('stringToNumberPercentFractionDigits2... 1st IF');
                 valueBeforeDot = valueNumbersAndDots.slice(0,indexDotLast).replace(/\./g, '');
                 valueAfterDot = valueNumbersAndDots.slice(indexDotLast, indexDotLast + 3);
                 valueConverted = valueBeforeDot + valueAfterDot;
@@ -137,12 +135,18 @@ class Deposit {
     }
 }
 
-let deposit = new Deposit(0,0,0,0,0);
-
 let converter = new Converter();
+
+let deposit = new Deposit(0,0,0,0,0);
 
 let listDeposits = document.querySelector('table');
 
+    // При реализации форматирования денежных сумм были учтены 2 особенности языка JavaScript, которые установили определенные ограничения.
+    // 1. JS нормально не воспринимает дисятичные числа, начинающиеся с 0. Следовательно, числа вида "005000" сразу форматируются, отбрасывая нули в начале,
+    // приводясь к виду "5000". Данное поведение свойственно всем встроенным методам обработки и приведения чисел, а т.к. я решил использоваться только нативные
+    // методы JS, указанное ограничение унаследовано и моим методом форматирования. Если нужно допустить вариант ввода чисел начинающихся с нуля, то нужно писать
+    // полностью свой метод форматирования и использовать его вместо toLocalString.
+    // 2. По этой же причине реализованный метод форматирования не дает ввести много нулей без цифры 1-9 в начале: 00000 сразу преабразуется в 0.
     listDeposits.formatInput = function (event) {
 
         if (event.target.nodeName.toLowerCase() === 'input' && typeof (event.target.value) === 'string') {
@@ -154,6 +158,15 @@ let listDeposits = document.querySelector('table');
 
                 if ((cursorStart === 0) && (converter.stringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
                     
+                } else if (event.target.value === '') {
+                    event.target.value = converter.stringToNumberFractionDigits2('0', event).toLocaleString('ru', {
+                        style: 'currency',
+                        currency: 'RUB',
+                        minimumFractionDigits: 2
+                    });
+
+                    event.target.selectionStart = 1;
+                    event.target.selectionEnd = 1;
                 } else {
                     event.target.value = converter.stringToNumberFractionDigits2(event.target.value, event).toLocaleString('ru', {
                         style: 'currency',
@@ -202,11 +215,19 @@ let listDeposits = document.querySelector('table');
                 }
 
             } else if (event.target.className === 'rate') {
-                event.target.value = converter.stringToNumberPercentFractionDigits2(event.target.value).toLocaleString('ru', {
-                    style: 'percent',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
+                if (event.target.value === '') {
+                    event.target.value = converter.stringToNumberPercentFractionDigits2('0').toLocaleString('ru', {
+                        style: 'percent',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                } else {
+                    event.target.value = converter.stringToNumberPercentFractionDigits2(event.target.value).toLocaleString('ru', {
+                        style: 'percent',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
                 // Закоментированный код ниже для случая процентов без долей "100 %". Он может еще пригодиться, поэтому пока сохраняю
                 // if (cursorStart >= (event.target.value.length - 2)) {
                 //     event.target.selectionStart = event.target.value.length - 2;
@@ -265,6 +286,7 @@ let listDeposits = document.querySelector('table');
                 }
             }
         }
+
     };
 
     listDeposits.addListBanksToSelect = function (event) {
@@ -284,9 +306,19 @@ let listDeposits = document.querySelector('table');
         }
     }
 
+    // Из-за особенностей срабатывания событий в браузере Safari, метод расчета депозита необходимо усложненным образом назначать на несколько обработчиков событий,
+    // вместо одного самого логичного "change". А особенность Safari заключается в том, что он не инициирует событие "change" если изменения в элемент input было внесено
+    // программно. А поскольку на поле для ввода валюты назначен обработчик на событие input, заменяющий введенное пользователем число на отформатированное число, как раз
+    // получается случай, когда значение вводиться программно и событие change не инициируется. Следовательно, расчет депозита, назначенный на change не происходит.
     listDeposits.calculateDeposit = function (event) {
-    
-        if (event.target.nodeName.toLowerCase() === 'input' || event.target.nodeName.toLowerCase() === 'select') {
+
+        if (((event.type === 'focusout' || (event.type === 'keydown' && event.keyCode === 13)) 
+                && (event.target.className === 'currency' || event.target.className === 'rate')
+            )
+            || ((event.type === 'change')
+                && (event.target.className === 'term' || event.target.className === 'termUnitOfMeasure' || event.target.className === 'rateType')
+                )) {
+
             tr = event.target.closest('tr');
             td = event.target.closest('td');
 
@@ -304,7 +336,9 @@ let listDeposits = document.querySelector('table');
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-        }
+
+            }
+    
     };
 
     listDeposits.createDeposit = function (event) {
@@ -422,6 +456,7 @@ let listDeposits = document.querySelector('table');
                 tdRateType_selectWrapper.className = 'selectWrapper';
 
                 let tdRateType_select = document.createElement('select');
+                    tdRateType_select.className = 'rateType';
                     tdRateType_select.name = 'rateType';
                 
                     let tdRateType_option_capitalizationPerMonth = document.createElement('option');
@@ -582,6 +617,7 @@ let listDeposits = document.querySelector('table');
     }
 
     listDeposits.saveDeposits = function () {
+
         localStorage.clear();
 
         if (listDeposits.rows.length > 2) {
@@ -635,27 +671,16 @@ let listDeposits = document.querySelector('table');
     }
 
     listDeposits.addEventListener('input', listDeposits.formatInput);
-    listDeposits.addEventListener('change', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.calculateDeposit);
-    listDeposits.addEventListener('change', listDeposits.saveDeposits);
+    listDeposits.addEventListener('focusout', listDeposits.calculateDeposit);
+    listDeposits.addEventListener('focusout', listDeposits.saveDeposits);
     listDeposits.addEventListener('focusin', listDeposits.addListBanksToSelect);
     listDeposits.addEventListener('click', listDeposits.addDepositAfter);
     listDeposits.addEventListener('click', listDeposits.addDepositToTheEnd);
     listDeposits.addEventListener('click', listDeposits.copyDeposit);
     listDeposits.addEventListener('click', listDeposits.deleteDeposit);
+    listDeposits.addEventListener('keydown', listDeposits.calculateDeposit);
+    listDeposits.addEventListener('keydown', listDeposits.saveDeposits);
 
     window.addEventListener('load', listDeposits.loadDeposits);
-
-
-let sectionMain = document.querySelector('.main');
-function showScrollLeftOnMain (event) {
-    console.log('Main scroll left:', event.target.scrollLeft);
-    console.log('Main offset left:', event.target.offsetLeft);
-}
-
-sectionMain.addEventListener('scroll', showScrollLeftOnMain);
-
-
-
-
 
