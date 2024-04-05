@@ -111,10 +111,15 @@ class Deposit {
         this.rate = rate;
         this.rateType = rateType;
         this.term = term;
+        this.sumInvested = 0;
+        this.sumProfit = 0;
+        this.sumTotal = 0;
     }
 
     calculate () {
-        let result = 0;
+        let sumInvested = 0;
+        let sumProfit = 0;
+        let sumTotal = 0;
 
         if (this.term <= 0) {
             console.log('Задайте срок вклада больше 0');
@@ -122,16 +127,24 @@ class Deposit {
         } else if (this.rateType === 'capitalizationPerMonth') {
             for (let i = 1; i <= this.term; i++) {
                 if (i === 1) {
-                    result = this.base + this.replenishment + ((this.base * this.rate) / 12);
+                    sumInvested = this.base + this.replenishment;
+                    sumProfit = ((this.base * this.rate) / 12);
+                    sumTotal = this.base + this.replenishment + ((this.base * this.rate) / 12);
                 } else {
-                    result = result + this.replenishment + ((result * this.rate) / 12);
+                    sumInvested = sumInvested + this.replenishment;
+                    sumProfit = sumProfit + ((sumTotal * this.rate) / 12);
+                    sumTotal = sumTotal + this.replenishment + ((sumTotal * this.rate) / 12);
                 }
             }
         } else if (this.rateType === 'percentInTheEnd') {
-            result = this.base + (((this.base * this.rate) / 12) * (this.term));
+            sumInvested = this.base;
+            sumProfit = (((this.base * this.rate) / 12) * (this.term));
+            sumTotal = this.base + (((this.base * this.rate) / 12) * (this.term));
         }
         
-        return result; 
+        this.sumInvested = sumInvested;
+        this.sumProfit = sumProfit;
+        this.sumTotal = sumTotal; 
     }
 }
 
@@ -330,7 +343,21 @@ let listDeposits = document.querySelector('table');
                 converter.stringToNumberFractionDigits2(listDeposits.rows[tr.rowIndex].cells[5].querySelector('input').value) * 12;
             deposit.rateType = listDeposits.rows[tr.rowIndex].cells[6].querySelector('select').value;
 
-            listDeposits.rows[tr.rowIndex].cells[7].querySelector('input').value = deposit.calculate().toLocaleString('ru', {
+            deposit.calculate();
+            
+            listDeposits.rows[tr.rowIndex].cells[7].querySelector('input').value = deposit.sumInvested.toLocaleString('ru', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            listDeposits.rows[tr.rowIndex].cells[8].querySelector('input').value = deposit.sumProfit.toLocaleString('ru', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            listDeposits.rows[tr.rowIndex].cells[9].querySelector('input').value = deposit.sumTotal.toLocaleString('ru', {
                 style: 'currency',
                 currency: 'RUB',
                 minimumFractionDigits: 2,
@@ -472,6 +499,30 @@ let listDeposits = document.querySelector('table');
             tdRateType_selectWrapper.append(tdRateType_select);
             tdRateType.append(tdRateType_selectWrapper);
 
+        let tdInvested = document.createElement('td');
+        
+            let tdInvested_input = document.createElement('input');
+                tdInvested_input.type = 'text';
+                tdInvested_input.className = 'currency';
+                tdInvested_input.name = 'sumInvested';
+                tdInvested_input.maxLength = 26;
+                tdInvested_input.value = '0,00 \u20BD';
+                tdInvested_input.disabled = true;
+
+            tdInvested.append(tdInvested_input);
+
+        let tdProfit = document.createElement('td');
+
+            let tdProfit_input = document.createElement('input');
+                tdProfit_input.type = 'text';
+                tdProfit_input.className = 'currency';
+                tdProfit_input.name = 'sumProfit';
+                tdProfit_input.maxLength = 26;
+                tdProfit_input.value = '0,00 \u20BD';
+                tdProfit_input.disabled = true;
+
+            tdProfit.append(tdProfit_input);
+
         let tdTotal = document.createElement('td');
 
             let tdTotal_input = document.createElement('input');
@@ -535,6 +586,8 @@ let listDeposits = document.querySelector('table');
         tr.append(tdRate);
         tr.append(tdTerm);
         tr.append(tdRateType);
+        tr.append(tdInvested);
+        tr.append(tdProfit);
         tr.append(tdTotal);
         tr.append(tdControl);
 
@@ -633,6 +686,8 @@ let listDeposits = document.querySelector('table');
                     term: String(listDeposits.rows[i].querySelector('[name=term]').value),
                     termUnitOfMeasure: String(listDeposits.rows[i].querySelector('[name=termUnitOfMeasure]').selectedIndex),
                     rateType: String(listDeposits.rows[i].querySelector('[name=rateType]').selectedIndex),
+                    sumInvested: String(listDeposits.rows[i].querySelector('[name=sumInvested]').value),
+                    sumProfit: String(listDeposits.rows[i].querySelector('[name=sumProfit]').value),
                     sumTotal: String(listDeposits.rows[i].querySelector('[name=sumTotal]').value),
                 };
 
@@ -662,6 +717,8 @@ let listDeposits = document.querySelector('table');
             rowCurrent.querySelector('[name=term]').value = rowStorage.term;
             rowCurrent.querySelector('[name=termUnitOfMeasure]').selectedIndex = rowStorage.termUnitOfMeasure;
             rowCurrent.querySelector('[name=rateType]').selectedIndex = rowStorage.rateType;
+            rowCurrent.querySelector('[name=sumInvested]').value = rowStorage.sumInvested;
+            rowCurrent.querySelector('[name=sumProfit]').value = rowStorage.sumProfit;
             rowCurrent.querySelector('[name=sumTotal]').value = rowStorage.sumTotal;
 
             let rowLast = listDeposits.rows.item(listDeposits.rows.length-1);
