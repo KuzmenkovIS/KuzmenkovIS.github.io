@@ -699,31 +699,33 @@ let listDeposits = document.querySelector('table');
 
     listDeposits.loadDeposits = function () {
 
-        for (let i=1; i < listDeposits.rows.length - 1; i++) {
-            listDeposits.deleteRow(i);
-        }
-
-        for (let i=1; i <= localStorage.length; i++) {
-
-            rowStorage = JSON.parse(localStorage.getItem('tr'+i));
-
-            let rowCurrent = listDeposits.createDeposit();
-
-            rowCurrent.querySelector('[name=nameBank]').selectedIndex = rowStorage.nameBank;
-            rowCurrent.querySelector('[name=nameDeposit]').value = rowStorage.nameDeposit;
-            rowCurrent.querySelector('[name=sumBase]').value = rowStorage.sumBase;
-            rowCurrent.querySelector('[name=sumReplenishment]').value = rowStorage.sumReplenishment;
-            rowCurrent.querySelector('[name=rate]').value = rowStorage.rate;
-            rowCurrent.querySelector('[name=term]').value = rowStorage.term;
-            rowCurrent.querySelector('[name=termUnitOfMeasure]').selectedIndex = rowStorage.termUnitOfMeasure;
-            rowCurrent.querySelector('[name=rateType]').selectedIndex = rowStorage.rateType;
-            rowCurrent.querySelector('[name=sumInvested]').value = rowStorage.sumInvested;
-            rowCurrent.querySelector('[name=sumProfit]').value = rowStorage.sumProfit;
-            rowCurrent.querySelector('[name=sumTotal]').value = rowStorage.sumTotal;
-
-            let rowLast = listDeposits.rows.item(listDeposits.rows.length-1);
-
-            rowLast.before(rowCurrent);
+        if (localStorage.length > 0) {
+            for (let i=1; i < listDeposits.rows.length - 1; i++) {
+                listDeposits.deleteRow(i);
+            }
+    
+            for (let i=1; i <= localStorage.length; i++) {
+    
+                rowStorage = JSON.parse(localStorage.getItem('tr'+i));
+    
+                let rowCurrent = listDeposits.createDeposit();
+    
+                rowCurrent.querySelector('[name=nameBank]').selectedIndex = rowStorage.nameBank;
+                rowCurrent.querySelector('[name=nameDeposit]').value = rowStorage.nameDeposit;
+                rowCurrent.querySelector('[name=sumBase]').value = rowStorage.sumBase;
+                rowCurrent.querySelector('[name=sumReplenishment]').value = rowStorage.sumReplenishment;
+                rowCurrent.querySelector('[name=rate]').value = rowStorage.rate;
+                rowCurrent.querySelector('[name=term]').value = rowStorage.term;
+                rowCurrent.querySelector('[name=termUnitOfMeasure]').selectedIndex = rowStorage.termUnitOfMeasure;
+                rowCurrent.querySelector('[name=rateType]').selectedIndex = rowStorage.rateType;
+                rowCurrent.querySelector('[name=sumInvested]').value = rowStorage.sumInvested;
+                rowCurrent.querySelector('[name=sumProfit]').value = rowStorage.sumProfit;
+                rowCurrent.querySelector('[name=sumTotal]').value = rowStorage.sumTotal;
+    
+                let rowLast = listDeposits.rows.item(listDeposits.rows.length-1);
+    
+                rowLast.before(rowCurrent);
+            }
         }
     }
 
