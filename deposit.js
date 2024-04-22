@@ -163,13 +163,14 @@ let listDeposits = document.querySelector('table');
     listDeposits.formatInput = function (event) {
 
         if (event.target.nodeName.toLowerCase() === 'input' && typeof (event.target.value) === 'string') {
+
             let valueLengthStart = event.target.value.length;
             let cursorStart = event.target.selectionStart;
             let cursorEnd = event.target.selectionEnd;
 
             if (event.target.className === 'currency') {
 
-                if ((cursorStart === 0) && (converter.stringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && (event.type === 'input')) {
+                if ((cursorStart === 0) && (converter.stringToNumberFractionDigits2(event.target.value, event) === 0) && (valueLengthStart > 6) && ((event.type === 'input'))) {
                     
                 } else if (event.target.value === '') {
                     event.target.value = converter.stringToNumberFractionDigits2('0', event).toLocaleString('ru', {
@@ -178,15 +179,93 @@ let listDeposits = document.querySelector('table');
                         minimumFractionDigits: 2
                     });
 
-                    event.target.selectionStart = 1;
-                    event.target.selectionEnd = 1;
+                    // Для Safari нужна проверка на тип события для нормальной обработки положения курсора и события "потери фокуса".
+                    // Если убрать проврку на тип события перед установкой положения курсора и вызвать данную функцию на событии "focusout",
+                    // то произойдет фиксация фокуса на выбранном элементе, потеряется возможность выбрать любой другой элемент и работать с приожением,
+                    // иными словами страница зависнет/сломается.
+                    // Данная проблема обнаружена именно в браузере Safari. В FireFox и Chrome она не возникает.
+                    if (event.type === 'input') {
+                        event.target.selectionStart = 1;
+                        event.target.selectionEnd = 1;
+                    }
                 } else {
                     event.target.value = converter.stringToNumberFractionDigits2(event.target.value, event).toLocaleString('ru', {
                         style: 'currency',
                         currency: 'RUB',
                         minimumFractionDigits: 2
                     });
+
+                    if (event.type === 'input') {
+                        if (event.target.value.length === 3) {
+                            event.target.selectionStart = 1;
+                            event.target.selectionEnd = 1;
+                        } else if (cursorStart >= (event.target.value.length - 2)) {
+                            event.target.selectionStart = event.target.value.length - 2;
+                            event.target.selectionEnd = event.target.value.length - 2;
+                        } else if (valueLengthStart > event.target.value.length) {
+                            if (cursorStart === 0) {
+                                event.target.selectionStart = cursorStart;
+                                event.target.selectionEnd = cursorEnd;
+                            } else if (event.target.value.length - cursorStart === 3) {
+                                event.target.selectionStart = cursorStart;
+                                event.target.selectionEnd = cursorEnd;
+                            } else {
+                                event.target.selectionStart = cursorStart - 1;
+                                event.target.selectionEnd = cursorEnd - 1;
+                            }
+                        } else if (valueLengthStart < event.target.value.length) {
+                            if (cursorStart === event.target.value.length - 5 && event.inputType === "deleteContentForward") {
+                                event.target.selectionStart = cursorStart + 1;
+                                event.target.selectionEnd = cursorEnd + 1;
+                            } else if (cursorStart === event.target.value.length - 3 || cursorStart === event.target.value.length - 4 || cursorStart === event.target.value.length - 5) {
+                                event.target.selectionStart = cursorStart;
+                                event.target.selectionEnd = cursorEnd;
+                            } else if (event.inputType === "deleteContentBackward") {
+                                event.target.selectionStart = cursorStart;
+                                event.target.selectionEnd = cursorEnd;
+                            } else {
+                                event.target.selectionStart = cursorStart + 1;
+                                event.target.selectionEnd = cursorEnd + 1;
+                            }
+                        } else if ( valueLengthStart === 5 && cursorStart === 0) {
+                            event.target.selectionStart = cursorStart + 1;
+                            event.target.selectionEnd = cursorEnd + 1;
+                        } else {
+                            event.target.selectionStart = cursorStart;
+                            event.target.selectionEnd = cursorEnd;
+                        }
+                    }
+          
                     
+                }
+
+            } else if (event.target.className === 'rate') {
+                if (event.target.value === '') {
+                    event.target.value = converter.stringToNumberPercentFractionDigits2('0').toLocaleString('ru', {
+                        style: 'percent',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                } else {
+                    event.target.value = converter.stringToNumberPercentFractionDigits2(event.target.value).toLocaleString('ru', {
+                        style: 'percent',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
+                // Закоментированный код ниже для случая процентов без долей "100 %". Он может еще пригодиться, поэтому пока сохраняю
+                // if (cursorStart >= (event.target.value.length - 2)) {
+                //     event.target.selectionStart = event.target.value.length - 2;
+                //     event.target.selectionEnd = event.target.value.length - 2;
+                // } else if ((event.target.value.replace(/\s/g, '') === '0%') && event.inputType === 'deleteContentForward') {
+                //     event.target.selectionStart = 1;
+                //     event.target.selectionEnd = 1;
+                // } else {
+                //     event.target.selectionStart = cursorStart;
+                //     event.target.selectionEnd = cursorEnd;
+                // }
+
+                if (event.type === 'input') {
                     if (event.target.value.length === 3) {
                         event.target.selectionStart = 1;
                         event.target.selectionEnd = 1;
@@ -226,71 +305,6 @@ let listDeposits = document.querySelector('table');
                         event.target.selectionEnd = cursorEnd;
                     }
                 }
-
-            } else if (event.target.className === 'rate') {
-                if (event.target.value === '') {
-                    event.target.value = converter.stringToNumberPercentFractionDigits2('0').toLocaleString('ru', {
-                        style: 'percent',
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                } else {
-                    event.target.value = converter.stringToNumberPercentFractionDigits2(event.target.value).toLocaleString('ru', {
-                        style: 'percent',
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                }
-                // Закоментированный код ниже для случая процентов без долей "100 %". Он может еще пригодиться, поэтому пока сохраняю
-                // if (cursorStart >= (event.target.value.length - 2)) {
-                //     event.target.selectionStart = event.target.value.length - 2;
-                //     event.target.selectionEnd = event.target.value.length - 2;
-                // } else if ((event.target.value.replace(/\s/g, '') === '0%') && event.inputType === 'deleteContentForward') {
-                //     event.target.selectionStart = 1;
-                //     event.target.selectionEnd = 1;
-                // } else {
-                //     event.target.selectionStart = cursorStart;
-                //     event.target.selectionEnd = cursorEnd;
-                // }
-
-                if (event.target.value.length === 3) {
-                    event.target.selectionStart = 1;
-                    event.target.selectionEnd = 1;
-                } else if (cursorStart >= (event.target.value.length - 2)) {
-                    event.target.selectionStart = event.target.value.length - 2;
-                    event.target.selectionEnd = event.target.value.length - 2;
-                } else if (valueLengthStart > event.target.value.length) {
-                    if (cursorStart === 0) {
-                        event.target.selectionStart = cursorStart;
-                        event.target.selectionEnd = cursorEnd;
-                    } else if (event.target.value.length - cursorStart === 3) {
-                        event.target.selectionStart = cursorStart;
-                        event.target.selectionEnd = cursorEnd;
-                    } else {
-                        event.target.selectionStart = cursorStart - 1;
-                        event.target.selectionEnd = cursorEnd - 1;
-                    }
-                } else if (valueLengthStart < event.target.value.length) {
-                    if (cursorStart === event.target.value.length - 5 && event.inputType === "deleteContentForward") {
-                        event.target.selectionStart = cursorStart + 1;
-                        event.target.selectionEnd = cursorEnd + 1;
-                    } else if (cursorStart === event.target.value.length - 3 || cursorStart === event.target.value.length - 4 || cursorStart === event.target.value.length - 5) {
-                        event.target.selectionStart = cursorStart;
-                        event.target.selectionEnd = cursorEnd;
-                    } else if (event.inputType === "deleteContentBackward") {
-                        event.target.selectionStart = cursorStart;
-                        event.target.selectionEnd = cursorEnd;
-                    } else {
-                        event.target.selectionStart = cursorStart + 1;
-                        event.target.selectionEnd = cursorEnd + 1;
-                    }
-                } else if ( valueLengthStart === 5 && cursorStart === 0) {
-                    event.target.selectionStart = cursorStart + 1;
-                    event.target.selectionEnd = cursorEnd + 1;
-                } else {
-                    event.target.selectionStart = cursorStart;
-                    event.target.selectionEnd = cursorEnd;
-                }
             } else if (event.target.className === 'term') {
                 event.target.value = Number(event.target.value.replace(/[^0-9]/g,''));
 
@@ -298,8 +312,8 @@ let listDeposits = document.querySelector('table');
                     event.target.value = 999;
                 }
             }
-        }
 
+        }
     };
 
     listDeposits.addListBanksToSelect = function (event) {
@@ -730,6 +744,7 @@ let listDeposits = document.querySelector('table');
     }
 
     listDeposits.addEventListener('input', listDeposits.formatInput);
+    listDeposits.addEventListener('focusout', listDeposits.formatInput);
     listDeposits.addEventListener('change', listDeposits.calculateDeposit);
     listDeposits.addEventListener('focusout', listDeposits.calculateDeposit);
     listDeposits.addEventListener('focusout', listDeposits.saveDeposits);
